@@ -1,0 +1,807 @@
+<html>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Alkatra&family=Inter:wght@300;400;500;700&family=Lilita+One&display=swap" rel="stylesheet">
+    <body>
+
+
+
+        <div class="focustug-control" id="focustug-control">
+            
+        <div class="focustug-control__container">
+            <div class="focustug-control__header">
+                <img src="./icon32.png" width="16" height="16" alt="">
+                FocusTug
+            </div>
+    
+            <div class="focustug-control__leaderboard" style="display: none;">
+                <p> Accountability Group (Default)</p>
+                <table> 
+                    <tr class="table-header">
+                        <td> User </td>
+                        <td> Focus % </td>
+                    </tr>
+                    <tr>
+                        <td> Deji</td>
+                        <td>50%</td>
+                    </tr>
+                    <tr>
+                        <td> Deji</td>
+                        <td>50%</td>
+                    </tr>
+                    <tr>
+                        <td> Deji</td>
+                        <td>50%</td>
+                    </tr>
+                    
+                </table>
+    
+    
+            </div>
+        
+            
+            <div id="break-time-alert" 
+            class="landing-container"
+                style=" 
+                padding: 16px; 
+                border-radius: 10px;
+                display: none;
+                
+                box-sizing: border-box;">
+            <div style=" box-sizing: border-box; padding: 16px; 
+                background: orange;  
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-radius: 10px;
+                width: 100%;" class="break-time-alert-container">
+                <div style="height: 100%;">
+    
+                    <p style="font-size: 18px; font-weight: 500; display: flex; align-items: center;">                                    
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                        </svg>
+                    Break time is due!</p>
+    
+                    <p style="font-size: 15px;" id="break-time-due"></p>
+                </div>
+                <button id="start-break" style="background: transparent !important; 
+                                                margin-left: 21px;
+                                                border: 2px solid black !important;
+                                                color: black;"> 
+                Start break</button>
+            </div>
+        </div>
+        <div id="break-time-ongoing"
+        class="landing-container" style=" padding: 16px; 
+                box-sizing: border-box; display: none;">
+            <div style=" box-sizing: 
+                border-box; padding: 16px; 
+                border-radius: 10px;
+                background: orange;  
+                width: 100%; display: flex; justify-content: space-between; align-items: center;" class="break-time-alert-container">
+                
+    
+                <div style="display: flex;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                    </svg>
+                    
+                    <div>
+    
+                        <p style="font-weight: 500; font-size: 18px;">Break ongoing</p>
+                        <p style="font-size: 13px;" id="break-time-left"></p>
+                    </div>
+                </div>
+                <button id="end-break" style="background: transparent !important; 
+                        border: 2px solid black !important;
+                        font-weight: 500 !important;
+                        color: black;"> End</button>
+            </div>
+        </div>
+    
+        
+    
+    
+            <div id="focustug-loading" class="lds-container" style="display: none; justify-content: center;">
+                <div class="lds-hourglass"></div>
+            </div>
+    
+            <div class="focustug-control__content" id='focustug-main-control'>
+                <div class="focustug-control-section focustug-control-taskarea">
+                    <p class="focustug-control-section__header">Start a new task</p>
+                    <textarea id="focustug-task-textarea" placeholder="Enter description of your task" style="margin-top: 8px"></textarea>
+                </div>
+                <div class="focustug-control-section focustug-control-taskarea">
+                    <p class="focustug-control-section__header">Intensity</p>
+    
+                    <div style="display: grid; grid-template-columns: 48% 48%; justify-content: space-between">
+                        <div class="focustug-control-section__intensity focustug-intensity-chosen" id="intensity-hard">
+                            <p class="focustug-control-section__intensity__header">Very Intense</p>
+                            <p class="focustug-control-section__intensity__desc">Block every distraction</p>
+                        </div>
+                        <div class="focustug-control-section__intensity" id="intensity-mild">
+                            <p class="focustug-control-section__intensity__header">Mild</p>
+                            <p class="focustug-control-section__intensity__desc">Show a simple focus bar</p>
+                        </div>
+                    </div>
+                    
+                </div>
+    
+                <div class="focustug-control-section focustug-control-timer">
+                    <p class="focustug-control-section__header">Timer</p>
+                    <div class="focustug-control-timer__container">
+    
+    
+                        <div style="display: flex; height: fit-content !important">
+    
+                            <div>
+                            
+                                <p id="work-time-display">1 hour</p>
+                                <p>Work</p>
+                            </div>
+                            <div>
+                                <button style=" background:  rgba(0, 0, 0, 0.299);;  margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='work-time-increase' class='timer-control'> 
+                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
+                                    </svg>
+                                        
+    
+                                </button>
+                                <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='work-time-decrease' class='timer-control'> 
+                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
+                                    </svg>
+                                        
+                                </button>
+                            </div>
+                        </div>
+                        <div style="display: flex; height: fit-content !important;">
+                            <div>
+                                <p id="break-time-display">15 minutes</p>
+                                <p>Break</p>
+                            </div>
+    
+                            <div>
+                            <button style="background: rgba(0, 0, 0, 0.299); margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='break-time-increase' class='timer-control'> 
+                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
+                                </svg>
+    
+                            </button>
+                            <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='break-time-decrease' class='timer-control'> 
+                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
+                                </svg>
+                            </button>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="focustug-control-section focustug-control-timer">
+                    <p class="focustug-control-section__header">Accountability Group</p>
+                   
+                    <select id="focustug-group-select" style="margin-top: 8px; width: 100%; background: rgba(255, 255, 255, 0.10); border: 0; padding: 16px; border-radius: 10px; color: white; font-size: 16px;">
+                        <option id="focustug-group-item">Flutterwave #199923</option>
+                    </select> 
+            
+                    <div id="focustug-new-group-container" style="margin-top: 8px; display: none">
+                        <label for="" style="margin-bottom: 8px; display: block;">Group Name</label>
+                        <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
+                    </div>
+                    <div id="focustug-join-group-container" style="margin-top: 8px; display: none">
+                        <label for="" style="margin-bottom: 8px; display: block;">Group Code</label>
+                        <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
+                    </div> 
+                   
+                    <div style="margin-top: 2px; color: grey; display: none">
+                        <p style="font-size: 14px;">Created a new group. You can share the code with whoever wants to join </p>
+                    </div>
+                    <div style="display: flex; justify-content: right; margin-top: 8px;">
+                        <button id="join-group-btn">Join group</button>
+                        <button id="create-group-btn">Create group</button>
+                    </div>
+                </div>
+    
+                <button class="focustug-control__startsession">Start Session</button>
+            </div>
+    
+    
+    
+    
+            <!--- when session is created-->
+            <div class="focustug-control__content" id="focustug-session-control" style="margin: 24px 0; display: none">
+                <p style="padding-bottom: 16px; font-size: 16px; text-align:center;   white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;" > Session: ${session}</p>
+    
+                <div style="display: grid; grid-template-columns: 30% 30% 30%; justify-content: space-between; ">
+                    <div style="display:flex; justify-content: center; flex-direction: column; align-items: center">
+                        <p style="color:#4ECB71">Total</p>
+                        <p id="focustug-sessiontime" style="color:#4ECB71"></p>
+                    </div>
+                    <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
+                        <p style="color: #A90F3D;">Distractions</p>
+                        <p id="focustug-distractiontime" style="color: #A90F3D;"></p>
+                    </div>
+                    <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
+                        <p style="color: orange;">Leaderboard</p>
+                        <p style="color: orange;"> 5th/10</p>
+                    </div>
+    
+                </div>
+                <button id="end-session-btn" class="focustug-control__endsession focustug-regular-button" style="margin-top: 24px;">End Session</button>
+            </div>
+    
+    
+    
+            <!-- when registration shit-->
+    
+            <div class="focustug-control__content" id="focustug-auth-container" style="padding: 24px 0;">
+    
+                <div id='focustug-login-container'>
+    
+                    <div class="focustug-auth-header">
+                        Sign in to FocusTug and start blocking distractions while you work
+                    </div>
+                    <div class="focustug-form-control">
+                        <input type="text" placeholder="Email" id='focustug-login-email'>
+                    </div>
+                    <div class="focustug-form-control">
+                        <input type="password"
+                         placeholder="Password" id='focustug-login-password'>
+                    </div>
+                    
+                    <div class="focustug-form-already">
+                        <p>Don't have an account? <span id="focustug-signup-onboarding">Sign up</span></p>
+                    </div>
+                    <button class="focustug-regular-button" id="focustug-login-cta"> Login </button>
+    
+                </div>
+    
+    
+                <div style='display: none' id='focustug-signup-container'>
+    
+                    <div class="focustug-auth-header">
+                        Sign up
+                    </div>
+                    <div class="focustug-form-control">
+                        <input placeholder="Name" id="focustug-register-name">
+                    </div>
+                    <div class="focustug-form-control">
+                        <input placeholder="Email" id="focustug-register-email">
+                    </div>
+                    <div class="focustug-form-control">
+                        <input placeholder="Password" id="focustug-register-password">
+                    </div>
+                    <button class="focustug-regular-button" id="focustug-register-cta"> Sign Up </button>
+    
+                    <div class="focustug-form-already">
+                        <p>Already have an account <span id="focustug-login-onboarding">Sign in</span></p>
+                    </div>
+    
+                </div>
+            </div>
+        
+        
+        
+        
+        
+        
+        
+        </div>
+            
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+        
+
+        <div class="foctug-popup">
+            <div class="foctug-popup__container">
+                <div class="foctug-popup__tray">
+                    
+                
+                    <div class="foctug-popup__item foctug-popup__item--partners">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 6H14L17.29 2.7C17.3829 2.60628 17.4935 2.53188 17.6154 2.48111C17.7373 2.43034 17.868 2.40421 18 2.40421C18.132 2.40421 18.2627 2.43034 18.3846 2.48111C18.5064 2.53188 18.617 2.60628 18.71 2.7L21.29 5.29C21.4762 5.47737 21.5808 5.73082 21.5808 5.995C21.5808 6.25919 21.4762 6.51264 21.29 6.7L19 9H11V11C11 11.2652 10.8946 11.5196 10.7071 11.7071C10.5196 11.8946 10.2652 12 9.99998 12C9.73477 12 9.48041 11.8946 9.29288 11.7071C9.10534 11.5196 8.99998 11.2652 8.99998 11V8C8.99998 7.46957 9.2107 6.96086 9.58577 6.58579C9.96084 6.21072 10.4695 6 11 6ZM4.99998 11V15L2.70998 17.29C2.52373 17.4774 2.41919 17.7308 2.41919 17.995C2.41919 18.2592 2.52373 18.5126 2.70998 18.7L5.28998 21.29C5.38295 21.3837 5.49355 21.4581 5.61541 21.5089C5.73726 21.5597 5.86797 21.5858 5.99998 21.5858C6.13199 21.5858 6.2627 21.5597 6.38456 21.5089C6.50642 21.4581 6.61702 21.3837 6.70998 21.29L11 17H15C15.2652 17 15.5196 16.8946 15.7071 16.7071C15.8946 16.5196 16 16.2652 16 16V15H17C17.2652 15 17.5196 14.8946 17.7071 14.7071C17.8946 14.5196 18 14.2652 18 14V13H19C19.2652 13 19.5196 12.8946 19.7071 12.7071C19.8946 12.5196 20 12.2652 20 12V11H13V12C13 12.5304 12.7893 13.0391 12.4142 13.4142C12.0391 13.7893 11.5304 14 11 14H8.99998C8.46955 14 7.96084 13.7893 7.58577 13.4142C7.2107 13.0391 6.99998 12.5304 6.99998 12V9L4.99998 11Z" fill="white"/>
+                            </svg>
+                            
+                    </div>
+                    <div class="foctug-popup__item foctug-popup__item--distractions">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M7.843 3.802C9.872 2.601 10.886 2 12 2C13.114 2 14.128 2.6 16.157 3.802L16.843 4.208C18.872 5.41 19.886 6.011 20.443 7C21 7.99 21 9.19 21 11.594V12.406C21 14.809 21 16.011 20.443 17C19.886 17.99 18.872 18.59 16.843 19.791L16.157 20.198C14.128 21.399 13.114 22 12 22C10.886 22 9.872 21.4 7.843 20.198L7.157 19.791C5.128 18.591 4.114 17.989 3.557 17C3 16.01 3 14.81 3 12.406V11.594C3 9.19 3 7.989 3.557 7C4.114 6.01 5.128 5.41 7.157 4.208L7.843 3.802ZM13 16C13 16.2652 12.8946 16.5196 12.7071 16.7071C12.5196 16.8946 12.2652 17 12 17C11.7348 17 11.4804 16.8946 11.2929 16.7071C11.1054 16.5196 11 16.2652 11 16C11 15.7348 11.1054 15.4804 11.2929 15.2929C11.4804 15.1054 11.7348 15 12 15C12.2652 15 12.5196 15.1054 12.7071 15.2929C12.8946 15.4804 13 15.7348 13 16ZM12 6.25C12.1989 6.25 12.3897 6.32902 12.5303 6.46967C12.671 6.61032 12.75 6.80109 12.75 7V13C12.75 13.1989 12.671 13.3897 12.5303 13.5303C12.3897 13.671 12.1989 13.75 12 13.75C11.8011 13.75 11.6103 13.671 11.4697 13.5303C11.329 13.3897 11.25 13.1989 11.25 13V7C11.25 6.80109 11.329 6.61032 11.4697 6.46967C11.6103 6.32902 11.8011 6.25 12 6.25Z" fill="white"/>
+                            </svg>
+                            
+                    </div>
+                    <div class="foctug-popup__item foctug-popup__item--task">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g clip-path="url(#clip0_29_6)">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M15 2C15.3511 2.00001 15.6959 2.09243 16 2.26796C16.304 2.4435 16.5565 2.69597 16.732 3H18C18.5304 3 19.0391 3.21071 19.4142 3.58579C19.7893 3.96086 20 4.46957 20 5V17C20 18.3261 19.4732 19.5979 18.5355 20.5355C17.5979 21.4732 16.3261 22 15 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V5C4 4.46957 4.21071 3.96086 4.58579 3.58579C4.96086 3.21071 5.46957 3 6 3H7.268C7.44353 2.69597 7.696 2.4435 8.00003 2.26796C8.30406 2.09243 8.64894 2.00001 9 2H15ZM14.824 9.379L10.582 13.621L9.167 12.207C8.9784 12.0248 8.7258 11.924 8.4636 11.9263C8.2014 11.9286 7.95059 12.0338 7.76518 12.2192C7.57977 12.4046 7.4746 12.6554 7.47233 12.9176C7.47005 13.1798 7.57084 13.4324 7.753 13.621L9.803 15.672C9.90515 15.7742 10.0264 15.8553 10.1599 15.9106C10.2934 15.9659 10.4365 15.9944 10.581 15.9944C10.7255 15.9944 10.8686 15.9659 11.0021 15.9106C11.1356 15.8553 11.2568 15.7742 11.359 15.672L16.239 10.793C16.3318 10.7001 16.4055 10.5898 16.4557 10.4684C16.5059 10.3471 16.5317 10.217 16.5317 10.0856C16.5317 9.9543 16.5057 9.82424 16.4554 9.70291C16.4051 9.58158 16.3314 9.47134 16.2385 9.3785C16.1456 9.28566 16.0353 9.21202 15.9139 9.1618C15.7926 9.11158 15.6625 9.08575 15.5311 9.0858C15.3998 9.08584 15.2697 9.11176 15.1484 9.16207C15.0271 9.21238 14.9168 9.28609 14.824 9.379ZM14.5 4H9.5C9.38297 3.99996 9.26964 4.04097 9.17974 4.11589C9.08984 4.19081 9.02906 4.29489 9.008 4.41L9 4.5V5.5C8.99996 5.61703 9.04097 5.73036 9.11589 5.82026C9.19081 5.91016 9.29489 5.97094 9.41 5.992L9.5 6H14.5C14.617 6.00004 14.7304 5.95903 14.8203 5.88411C14.9102 5.80919 14.9709 5.70511 14.992 5.59L15 5.5V4.5C15 4.38297 14.959 4.26964 14.8841 4.17974C14.8092 4.08984 14.7051 4.02906 14.59 4.008L14.5 4Z" fill="black"/>
+                            </g>
+                            <defs>
+                            <clipPath id="clip0_29_6">
+                            <rect width="24" height="24" fill="white"/>
+                            </clipPath>
+                            </defs>
+                            </svg>
+                            
+                    </div>
+                </div>
+    
+                <div class="foctug-popup__lead">
+                    <div class="foctug-popup__lead__container">
+                            <div class="draggable">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12H16V16H12V12ZM6 12H10V16H6V12ZM0 12H4V16H0V12ZM12 6H16V10H12V6ZM6 6H10V10H6V6ZM0 6H4V10H0V6ZM12 0H16V4H12V0ZM6 0H10V4H6V0ZM0 0H4V4H0V0Z" fill="#4ECB71"/>
+                                    </svg>
+                                    
+                            </div>
+                            <div class="foctug-popup__lead__bar">
+                                <div class="foctug-popup__lead__bar__percentage" id="foctug-popup__lead__bar__percentage">
+                                    100%
+                                </div>
+                                <div class="foctug-popup__lead__bar__focusbar" id="foctug-popup__lead__bar__focusbar">
+    
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+    </body>
+</html>
+
+
+<style>
+
+
+    .focustug-control__leaderboard  {
+        padding: 24px;
+    }
+
+    .focustug-control__leaderboard > table {
+        width: 100%;
+	border-collapse: collapse; 
+	margin:8px auto;
+    }
+
+    .focustug-control__leaderboard > th {
+	background: #3498db; 
+	color: white; 
+	font-weight: bold; 
+	
+    }
+
+    .focustug-control__leaderboard  tr {
+
+	
+	
+    }
+
+    .table-header {
+        background: lightgrey;
+    }
+
+    .focustug-control__leaderboard  tr {
+	padding: 10px; 
+	border: 1px solid grey; 
+	text-align: left; 
+	font-size: 16px;
+    color: grey;
+	
+    }
+    .focustug-auth-header {
+        font-size: 18px !important;
+        text-align: center !important;
+        padding: 14px 0 !important;
+    }
+    .focustug-form-control {
+        padding: 8px 0;
+    }
+
+    .focustug-form-control > input  {
+        background: rgba(255, 255, 255, 0.10);
+        height: 50px;
+        border: 0;
+        padding: 16px;
+        font-size: 16px;;
+        width: 100%  !important;
+        box-sizing: border-box;
+        color: white;
+    }
+    .focustug-form-control > input:focus  {
+        outline: 0  !important
+    }
+
+    .focustug-form-control > input  {
+        background: rgba(255, 255, 255, 0.10);
+        height: 50px;
+        border: 0;
+        padding: 16px;
+        font-size: 16px;;
+        width: 100%  !important;
+        box-sizing: border-box;
+    }
+    .focustug-form-already > p  {
+        font-size: 14px;
+        text-align: center;
+        width: 100%;
+    }
+    .focustug-form-already > p > span {
+        color: #4ECB71;
+        cursor: pointer;
+
+    }
+    
+
+   p {
+    margin-block: auto !important;
+   }
+   .focustug-intensity-chosen {
+    background-color: #6dff9632 !important;
+    border-radius: 10px;
+   }
+    .focustug-control{
+        background-color: #222436;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;        border-radius: 20px;;
+        color: white;
+        font-family: 'Inter', sans-serif !important;
+        max-width: 413px;
+        position: fixed;
+        right: 16;
+        top: 16;
+        height: fit-content;
+    }
+
+    .focustug-control__container {
+        padding: 16px 24px;
+    }
+
+    .focustug-control__header{
+        font-size: 18px;
+        color: white;
+        display: flex;
+        align-items: center;
+    }
+
+    .focustug-control__header > img {
+        margin-right: 8px;
+    }
+
+    .focustug-control__content {
+
+    }
+
+    .focustug-control-section {
+        padding: 16px 0;
+        border-bottom: 0.5px solid rgba(211, 211, 211, 0.079);
+    }
+
+
+    .focustug-control-section__header {
+        
+        font-size: 15px;
+        margin-bottom: 20px;
+        font-weight: 400;
+    }
+
+    .focustug-control-section > textarea {
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.10);
+        width: 100%; 
+        height: 100px;
+        border: 0;
+        color: white;
+        font-size: 14px;
+        padding: 8px;
+        font-family: 'Inter', sans-serif;
+        appearance: none;
+        resize: none;
+        padding: 16px;
+
+    }
+
+    .focustug-control-section > textarea:focus {
+        outline: 0;
+        color: white
+
+    }
+
+    .focustug-control-section__intensity {
+        line-height: 158.523%;
+        padding: 8px 16px;
+        margin: 2px 0;;
+    }
+    
+
+    .focustug-control-section__intensity:hover {
+        border-radius: 10px;
+        cursor: pointer;
+        padding: 8px 16px;
+        
+
+    background: rgba(78, 203, 113, 0.10);
+    }
+
+    .focustug-control-section__intensity__header {
+        font-size: 13px;
+        font-weight: 300;
+    }
+    .focustug-control-section__intensity__desc {
+        color: rgb(205, 205, 205);
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+
+    .focustug-control-timer {
+      
+    }
+
+    .focustug-control-timer__container {
+        display: grid;
+        grid-template-columns: 45% 45%;
+        justify-content: space-between;
+        padding: 8px;
+    }
+
+    .focustug-control-timer__container > div {
+        background: rgba(255, 255, 255, 0.10);
+        border-radius: 10px;
+        display: flex;
+        
+        justify-content: space-between;
+        padding: 16px;
+        font-size: 15px;
+        vertical-align: auto;
+        cursor: pointer;
+
+    }
+    .focustug-control-timer__container > div:hover {
+        background: rgba(255, 255, 255, 0.038);
+      
+
+    }
+
+    .focustug-control__startsession {
+        border-radius: 10px;
+        background: #4ECB71;
+        width: 100%;
+        border: 0;
+        padding: 16px;;
+        color: #000;
+        text-align: center;
+        font-size: 16px;
+        font-family: Inter;
+        font-weight: 500;
+    }
+
+    .focustug-regular-button {
+        border-radius: 10px;
+        background: #4ECB71;
+        width: 100%;
+        border: 0;
+        padding: 16px;;
+        color: #000;
+        text-align: center;
+        font-size: 16px;
+        font-family: Inter;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .focustug-regular-button:hover {
+        transform: scale(1.05);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .foctug-popup {
+        position: fixed;
+        bottom: 30px;
+        left: 0px;
+    }
+
+    .foctug-popup__tray{
+        height: 0px;
+        overflow: hidden;
+    }
+
+    .foctug-popup__item{
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-left: 32px;
+        margin-top: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        height: 0px;
+        overflow: hidden;
+        transition: 0.7s all ease-in-out;
+
+    }
+    .foctug-popup__item:hover{
+       filter: brightness(0.5);
+    }
+    .foctug-popup__item--task{
+        background-color: #6DFF96;
+    }
+    .foctug-popup__item--distractions{
+        background-color: #A90F3D;
+    }
+    .foctug-popup__item--partners{
+        
+        background-color: #FFA800;
+    }
+
+    .foctug-popup__lead{
+        width: 120px;
+        height: 30px;
+        border-radius: 20px;
+        
+    }
+    .foctug-popup__lead__container {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    }
+
+    .draggable {
+        margin-right: 8px;
+        cursor: pointer;
+    }
+    .draggable:hover > svg > path {
+        fill: #10762d;
+    }
+    .foctug-popup__lead__bar {
+         height: 100%;
+         width: 100%;
+         background: #A90F3D;
+         border-radius: 20px;
+         cursor: pointer;
+         position: relative;
+    }
+    .foctug-popup__lead__bar:hover {
+         height: 100%;
+         width: 100%;
+         background: #81072c;
+         border-radius: 20px;
+    }
+    .foctug-popup__lead__bar:hover > .foctug-popup__lead__bar__focusbar {
+        background-color: #10762d;
+
+    }
+
+    .foctug-popup__lead__bar__focusbar {
+        background-color: #4ECB71;
+        width: 70%;
+        height: 100%;
+        border-radius: 20px;   
+    }
+
+    .foctug-popup__lead__bar__percentage {
+        position: absolute;
+        top: 15%;
+        font-weight: 800;
+        left: 16px;
+    }
+
+
+
+
+</style>
+
+
+<script>
+    window.addEventListener('load', function() {
+
+        const CONTROL_ELEMENT = document.getElementById('focustug-control')
+        const TASK_TEXTAREA_ELEMENT = document.getElementById('focustug-task-textarea')
+        const INTENSITY_ELEMENTS = document.getElementsByClassName('focustug-control-section__intensity');
+        let DEFAULT_WORK_TIMES  = ['60', '45', '30', '25', '20', '15', '10', '5']
+        let DEFAULT_BREAK_TIMES  = ['60', '45', '30', '25', '20', '15', '10', '5'];
+
+        let sampleTaskPlaceHolders = ["Conduct market research to identify potential target markets and evaluate demand for a new service offering"]
+        
+        
+
+        let chosenWorkTime = '60';
+        let chosenBreakTime = '15';
+
+
+
+        const task = TASK_TEXTAREA_ELEMENT.value;
+
+        // choose intensity
+        for (let el of INTENSITY_ELEMENTS) {
+            el.addEventListener('click', function(e){
+                for (let element of INTENSITY_ELEMENTS) {
+                    element.classList.remove('focustug-intensity-chosen')
+                }
+                e.currentTarget.classList.add('focustug-intensity-chosen')
+            })
+        }
+
+
+        // timer
+        if (chosenBreakTime === '60') {
+            
+        }
+        
+        
+
+
+
+
+
+
+
+        
+
+
+
+        const lead = document.getElementsByClassName('foctug-popup__lead')[0];
+        const container = document.getElementsByClassName('foctug-popup')[0];
+        const popup_items = document.getElementsByClassName('foctug-popup__item')
+        if (lead) {
+            lead.addEventListener('mouseover', function() {
+                // tray;
+                const tray = document.getElementsByClassName('foctug-popup__tray')[0];
+                tray.style.height = 'auto';
+
+                for (let item of popup_items) {
+
+                  
+                        item.style.height= '50px';
+                    
+                }
+            })
+            container.addEventListener('mouseleave', function() {
+                // tray;
+                const tray = document.getElementsByClassName('foctug-popup__tray')[0];
+                tray.style.height = '0';
+                for (let item of popup_items) {
+                  
+                    item.style.height= '0';
+
+                }
+            })
+
+
+            
+        }
+        
+    })
+</script>

@@ -1,0 +1,428 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600&display=swap');    
+    .foctug-popup {
+        position: fixed;
+        bottom: 30px;
+        left: 0px;
+        z-index: 10000000000000000;
+        font-family: 'Lilita One', cursive !important;
+    }
+
+    .foctug-popup__tray{
+        height: 0px;
+        overflow: hidden;
+    }
+
+    .foctug-popup__item{
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-left: 32px;
+        margin-top: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        height: 0px;
+        overflow: hidden;
+        transition: 0.7s all ease-in-out;
+
+    }
+    .foctug-popup__item:hover{
+       filter: brightness(0.5);
+    }
+    .foctug-popup__item--task{
+        background-color: #6DFF96;
+    }
+    .foctug-popup__item--distractions{
+        background-color: #A90F3D;
+    }
+    .foctug-popup__item--partners{
+        
+        background-color: #FFA800;
+    }
+
+    .foctug-popup__lead{
+        width: 200px;
+        height: 30px;
+        border-radius: 20px;
+        margin: 16px 0;;
+        
+    }
+    .foctug-popup__lead__container {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    }
+
+    .draggable {
+        margin-right: 8px;
+        cursor: pointer;
+    }
+    .draggable:hover > svg > path {
+        fill: #10762d;
+    }
+    .foctug-popup__lead__bar {
+         height: 20px;
+         width: 100%;
+         background: #A90F3D;
+         border-radius: 20px;
+         cursor: pointer;
+         position: relative;
+    }
+    .foctug-popup__lead__bar:hover {
+         height: 100%;
+         width: 100%;
+         background: #81072c;
+         border-radius: 20px;
+    }
+    .foctug-popup__lead__bar:hover > .foctug-popup__lead__bar__focusbar {
+        background-color: #10762d;
+
+    }
+
+    .foctug-popup__lead__bar__focusbar {
+        background-color: #4ECB71;
+        width: 100%;
+        height: 100%;
+        border-radius: 20px;   
+    }
+
+    .foctug-popup__lead__bar__percentage {
+        position: absolute;
+        top: 15%;
+        font-weight: 800;
+        left: 16px;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.focustug-control  p {
+    margin-block: 0 !important;
+}
+
+.focustug-intensity-chosen {
+    background-color: #6dff9632 !important;
+    border-radius: 10px;
+   }
+.focustug-control{
+    
+    font-family: 'Inter', sans-serif;
+        background-color: #222436;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;        border-radius: 20px;;
+    color: white;
+    width: 413px;
+    position: fixed;
+    right: 16px !important;
+    top: 16px !important;
+    z-index: 10000000000000000;
+    max-height: 80vh !important;
+    overflow: scroll !important;
+}
+
+    .focustug-control__container {
+        padding: 16px 24px;
+    }
+
+    .focustug-control__header{
+        font-size: 18px;
+        color: white;
+        display: flex;
+        align-items: center;
+    }
+
+    .focustug-control__header > img {
+        margin-right: 8px;
+    }
+
+    .focustug-control__content {
+    }
+
+    .focustug-control-section {
+        padding: 16px 0;
+        border-bottom: 0.5px solid rgba(211, 211, 211, 0.079);
+    }
+
+
+    .focustug-control-section__header {
+        
+        font-size: 15px !important;
+        margin-bottom: 20px !important;
+        font-weight: 400 !important;
+    }
+
+    .focustug-control-section > textarea {
+        border-radius: 5px !important;
+        background: rgba(255, 255, 255, 0.10) !important;
+        width: 100% !important; 
+        height: 100px !important;
+        border: 0 !important;
+        color: white !important;
+        font-size: 14px !important;
+        padding: 8px !important;
+        appearance: none !important;
+        resize: none !important;
+        padding: 16px !important;
+        box-sizing: border-box;
+
+    }
+
+    .focustug-control-section > textarea:focus {
+        outline: 0 !important;
+        color: white !important
+
+    }
+
+    .focustug-control-section__intensity {
+        line-height: 158.523%;
+        padding: 8px 16px;
+        margin: 2px 0;;
+    }
+    
+
+    .focustug-control-section__intensity:hover {
+        border-radius: 10px;
+        cursor: pointer;
+        padding: 8px 16px;
+        
+
+    background: rgba(78, 203, 113, 0.10);
+    }
+
+    .focustug-control-section__intensity__header {
+        font-size: 13px;
+        font-weight: 300;
+    }
+    .focustug-control-section__intensity__desc {
+        color: rgb(205, 205, 205);
+        font-weight: 300;
+        font-size: 14px;
+    }
+
+
+    .focustug-control-timer {
+      
+    }
+
+    .focustug-control-timer__container {
+        display: grid;
+        grid-template-columns: 45% 45%;
+        justify-content: space-between;
+        padding: 8px;
+    }
+
+    .focustug-control-timer__container > div {
+        background: rgba(255, 255, 255, 0.10);
+        border-radius: 10px;
+        display: flex;
+        
+        justify-content: space-between;
+        padding: 16px;
+        font-size: 15px;
+        vertical-align: auto;
+        cursor: pointer;
+
+    }
+    .focustug-control-timer__container > div:hover {
+        background: rgba(255, 255, 255, 0.038);
+      
+
+    }
+
+    .focustug-control-timer__container > svg {
+        height: 100%;
+        width: 100%;
+      
+
+    }
+    .focustug-regular-button:hover {
+        transform: scale(1.05);
+    }
+
+
+    .focustug-control__startsession {
+        border-radius: 10px;
+        background: #4ECB71;
+        width: 100%;
+        border: 0;
+        padding: 16px;;
+        color: #000;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 500;
+    }
+.focustug-control__endsession {
+        border-radius: 10px;
+    background: #A90F3D !important;
+    width: 100%;
+    border: 0;
+    padding: 16px;;
+    color: #000;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    }
+
+
+    
+    .focustug-regular-button {
+        border-radius: 10px;
+        background: #4ECB71;
+        width: 100%;
+        border: 0;
+        padding: 16px;;
+        color: #000;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+
+    }
+
+
+
+    .focustug-control__startsession:disabled {
+        background-color: grey !important;
+        color: white  !important;
+    }
+
+
+
+
+    .focustug-auth-header {
+        font-size: 18px !important;
+        text-align: center !important;
+        padding: 14px 0 !important;
+    }
+    .focustug-form-control {
+        padding: 8px 0;
+    }
+
+    .focustug-form-control > input  {
+        background: rgba(255, 255, 255, 0.10);
+        height: 50px;
+        border: 0;
+        padding: 16px;
+        font-size: 16px;;
+        width: 100%  !important;
+        box-sizing: border-box;
+        color: white;
+    }
+    .focustug-form-control > input:focus  {
+        outline: 0  !important
+    }
+
+    input:focus{
+        outline: 0 !important;
+    }
+
+    .focustug-form-control > input  {
+        background: rgba(255, 255, 255, 0.10);
+        height: 50px;
+        border: 0;
+        padding: 16px;
+        font-size: 16px;;
+        width: 100%  !important;
+        box-sizing: border-box;
+        border-radius: 15px;
+    }
+
+    input {
+        background: rgba(255, 255, 255, 0.10);
+        height: 50px;
+        border: 0;
+        padding: 16px;
+        font-size: 16px;;
+        width: 100%  !important;
+        box-sizing: border-box;
+        color: white;
+    }
+
+
+    .focustug-form-already > p  {
+        font-size: 14px;
+        width: 100%;
+        margin: 16px 0;
+    }
+    .focustug-form-already  {
+        margin: 16px 0;
+    }
+    .focustug-form-already > p > span {
+        color: #4ECB71;
+        cursor: pointer;
+
+
+    }
+    
+
+    .focustug-control button:disabled {
+        background-color: lightgrey;
+        color: white;
+    }
+
+
+.lds-container {
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 16px;
+    position: relative;
+  }
+  
+  .lds-hourglass {
+    display: inline-block;
+    width: 40px;
+    padding: 20px 0;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+  }
+  .lds-hourglass:after {
+    content: " ";
+    display: block;
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    margin: 6px;
+    box-sizing: border-box;
+    border: 10px solid #4ECB71;
+    border-color: #4ECB71 transparent #4ECB71 transparent;
+    animation: lds-hourglass 1.2s infinite;
+  }
+  @keyframes lds-hourglass {
+    0% {
+      transform: rotate(0);
+      animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    50% {
+      transform: rotate(900deg);
+      animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    100% {
+      transform: rotate(1800deg);
+    }
+  }

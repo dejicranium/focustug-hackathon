@@ -1,0 +1,1393 @@
+<html>
+    <script src="./chart.js"></script>
+    <script src="./chart-infuse.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ABeeZee&family=Alkatra&family=Inter:wght@300;400;500;700&family=Lilita+One&display=swap" rel="stylesheet">
+    <div class="logo" style="display: flex; align-items:center">
+        <img src="./icon128.png"/>
+        <p style="color: darkgrey">FocusTug Assistant</p>        
+    </div>
+
+
+    <div id="tabs" class="tabs">
+        <div id="task-tab" class="landing-tab">Task</div>
+        <div id="stats-tab" class="landing-tab">Stats</div>
+        <div id="recent-tasks-tab" class="landing-tab">Recent Tasks</div>
+        <div id="settings-tab" class="landing-tab">Settings</div>
+    </div>
+    
+    <div id="onboarding" class="landing landing-container" style="display: none;">
+        <div style="display: flex; justify-content: space-between;">
+
+            <img style="width: 200px; height:200px; margin: auto;" src="./onboarding.svg"/>
+        </div>
+
+        <h3>Welcome to Focus Tug</h3>
+        <p>The intelligent web assistant that helps you prioritize important tasks and stay on track by identifying and blocking unproductive websites and applications</p>
+        <div style="display: flex; margin-top: 16px;  justify-content:center; width: 80%; margin:24px auto;">
+
+            <button id="onboarding-getstarted" style="width: 100%;">Get started</button>
+        </div>
+    </div>
+
+    <div class="upgrade landing-container">
+        <div class="upgrade__container">
+            
+        </div>
+    </div>
+
+    <div id="latest-version" class="landing landing-container" style="display: none;" >
+        <div style="display: flex; justify-content: space-between;">
+
+            <img style="width: 200px; height:200px; margin: auto;" src="./onboarding.svg"/>
+        </div>
+
+        <h3>New version availaible!</h3>
+        <p>Please update to the latest version of FocusTug</p>
+        <div style="display: flex; margin-top: 16px;  justify-content:center; width: 80%; margin:24px auto;">
+
+            <button id="onboarding-getstarted" style="width: 100%;">Update</button>
+        </div>
+    </div>
+
+    <div id="loading" class="lds-container" style="display: none;">
+        <div class="lds-hourglass"></div>
+    </div>
+    
+
+    <div id="break-time-alert" 
+        class="landing-container"
+            style=" 
+            padding: 16px; 
+            border-radius: 10px;
+            
+            box-sizing: border-box;">
+        <div style=" box-sizing: border-box; padding: 16px; 
+            background: orange;  
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;" class="break-time-alert-container">
+            <div style="height: 100%;">
+
+                <p style="font-size: 18px; font-weight: 500; display: flex; align-items: center;">                                    
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                    </svg>
+                Break time is due!</p>
+    
+                <p style="font-size: 15px;" id="break-time-due"></p>
+            </div>
+            <button id="start-break" style="background: transparent !important; 
+                                            margin-left: 21px;
+                                            border: 2px solid black !important;
+                                            color: black;"> 
+            Start break</button>
+        </div>
+    </div>
+    <div id="break-time-ongoing"
+    class="landing-container" style=" padding: 16px; 
+            box-sizing: border-box;">
+        <div style=" box-sizing: 
+            border-box; padding: 16px; 
+            border-radius: 10px;
+            background: orange;  
+            width: 100%; display: flex; justify-content: space-between; align-items: center;" class="break-time-alert-container">
+            
+
+            <div style="display: flex;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                </svg>
+                
+                <div>
+    
+                    <p style="font-weight: 500; font-size: 18px;">Break ongoing</p>
+                    <p style="font-size: 13px;" id="break-time-left"></p>
+                </div>
+            </div>
+            <button id="end-break" style="background: transparent !important; 
+                    border: 2px solid black !important;
+                    font-weight: 500 !important;
+                     color: black;"> End</button>
+        </div>
+    </div>
+
+    <div id="auth" class="landing-container" style="display:  none;">
+        <div id="auth-error"  style="display: none; background: red; color:white; padding: 8px 16px; margin-bottom: 8px">There was an error</div>
+        <div id="login" > 
+            <div class="form-input">
+                <label for="">Email</label>
+                <input id="login-email"  required type="email">
+            </div>
+            <div class="form-input">
+                <label for="">Password</label>
+                <input id="login-password" required type="password">
+            </div>
+
+            <div class="" style="margin-top: 8px; display: flex; justify-content: space-between">
+                <p style="color: #4ECB71">Don't have an account? <span class="underline" id="switch-register">Register</span></p>
+                <button id="login-btn">Login</button>
+            </div>
+
+        </div>
+        <div id="register" style="display: none;"> 
+            <div class="form-input">
+                <label for="">Your Name</label>
+                <input id="register-name" type="text">
+            </div>
+            <div class="form-input">
+                <label for="">Email</label>
+                <input id="register-email" type="email">
+            </div>
+            <div class="form-input">
+                <label for="">Password</label>
+                <input id="register-password" type="password">
+            </div>
+
+            <div class="" style="margin-top: 8px; display: flex; justify-content: space-between">
+                <p style="color: #4ECB71">Already have an account?  <span class="underline" id="switch-login">Sign in</span></p>
+                <button id="register-btn">Sign up</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="settings" class="settings landing-container" style="display: none">
+        <div class="settings-container">
+            <!--<div id="settings-back" style="margin-bottom: 16px; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 15L3 9L9 3L10.0688 4.05L5.86875 8.25H15V9.75H5.86875L10.0688 13.95L9 15Z" fill="#F8F8F8"/>
+                </svg>
+            </div>-->
+
+
+            <div class="hard-lock-container" style="margin-bottom: 16px; padding: 8px 16px; border: 0.5px solid rgba(245, 245, 245, 0.08); border-radius: 10px;">
+                <h2 style="margin-bottom: 2px !important">Hard-Locked Sites</h2>
+                <span style="color: grey; font-size: 14px; display: block; margin: 8px 0;">Place a hard lock on a list of distracting sites.</span>
+                
+                
+                <div id="hard-lock-content">
+
+                </div>
+               
+                
+                <div style="display: flex; justify-content: flex-start; align-items: center;">
+                    <button id="add-lock-site-btn" style="margin-right: 16px; display: flex; align-items: center; height: 100%; background: transparent;  color: #4ECB71; border:0px solid white; padding: 16px 0px;">
+                        <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.167 9.70968H11.167V4.70968C11.167 4.48866 11.0792 4.2767 10.9229 4.12042C10.7666 3.96414 10.5547 3.87634 10.3337 3.87634C10.1126 3.87634 9.90068 3.96414 9.7444 4.12042C9.58812 4.2767 9.50033 4.48866 9.50033 4.70968V9.70968H4.50033C4.27931 9.70968 4.06735 9.79747 3.91107 9.95375C3.75479 10.11 3.66699 10.322 3.66699 10.543C3.66699 10.764 3.75479 10.976 3.91107 11.1323C4.06735 11.2885 4.27931 11.3763 4.50033 11.3763H9.50033V16.3763C9.50033 16.5974 9.58812 16.8093 9.7444 16.9656C9.90068 17.1219 10.1126 17.2097 10.3337 17.2097C10.5547 17.2097 10.7666 17.1219 10.9229 16.9656C11.0792 16.8093 11.167 16.5974 11.167 16.3763V11.3763H16.167C16.388 11.3763 16.6 11.2885 16.7562 11.1323C16.9125 10.976 17.0003 10.764 17.0003 10.543C17.0003 10.322 16.9125 10.11 16.7562 9.95375C16.6 9.79747 16.388 9.70968 16.167 9.70968Z" fill="#4ECB71"/>
+                            </svg>
+                            
+                        Add new site</button>
+                   <button  id="save-hard-lock-btn" style="height: 30px; padding: 2px 8px;">Save changes</button> 
+                </div>
+            </div>
+            
+            <div style="border: 0.5px solid rgba(245, 245, 245, 0.08); padding: 0px 0; border-radius: 10px; margin-bottom: 16px;">
+            
+                <div class="settings-tabs" style="padding: 16px;">
+                    <h2>Optimal number of tabs</h2>
+                    <input id="settings-optimal-tabs" type="text" style="width: 100%;">
+                </div>
+               <!--  <div class="settings-tabs" style="padding: 16px !important;">
+                    <h2>Archive excessive tabs every</h2>
+                    <input id="settings-optimal-tabs" type="text" value="5 minutes" style="width: 100%;">
+                </div>-->
+            </div>
+    
+            
+
+
+
+            <div class="settings-characters" style="padding: 16px; border: 0.5px solid rgba(245, 245, 245, 0.08); border-radius: 10px;">
+                <h2>Blocker Tone</h2>
+
+                <div data-tone="normal"  class="settings-character">
+                    <!--<img src="https://i.ibb.co/YPNp8Fr/fun-3d-illustration-american-referee-1-1.png" alt="">-->
+                    <div  class="settings-character-details">
+                        <p>Normal</p>
+                        <p>Gentle. Encouraging comments to help you stay focused.
+                        </p>
+                    </div>
+                </div>
+                <div  data-tone="snarky" class="settings-character">
+                    <div class="settings-character-details">
+                        <p>Snarky</p>
+                        <p>Tough love. Snarky comments that grab your attention whenever you're losing focus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding: 16px; display: flex; justify-content: flex-end;">
+                <button id="settings-save">Save Settings</button>
+            </div> 
+
+
+
+            
+        </div>
+
+
+        
+    </div>
+
+    
+
+    <div id="create-container"  style="display: none;">
+
+            
+
+
+            
+            <div id="stats" class="stats landing-container" style="display: block !important;">
+
+                <div class="stats" style="display: block !important;">
+                
+                    <div class="stats__item" style="width: 100% !important;">
+
+                        <div style="display: flex; flex-direction: column;  align-items: center;  margin-bottom: 24px;">
+                        
+                            <p class="stats__item__header" style="text-align: center;">Productivity Grade</p>
+    
+                         
+                            <div style="position: relative !important ; ">
+                                <svg width="50" height="50" viewBox="0 0 96 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path style="display: none;"  id="stats-grade-polygon" d="M48 0L77.3893 9.54915L95.5528 34.5491V65.4509L77.3893 90.4509L48 100L18.6107 90.4509L0.447174 65.4509V34.5491L18.6107 9.54915L48 0Z" fill="orange"/>
+                                </svg>
+
+                                <p id="stats-grade-indicator" style="position: absolute; font-size: 30px; color: white; top: 7px; left: 15px;"></p>
+                                    
+                            </div>
+
+                            <p id="stats-grade-text" style="color: white; font-size: 12px; margin: auto; text-align: center; width: 100%; margin-top: 16px; color: grey"></p> 
+
+
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+
+                <div class="stats__container" style="display:flex; justify-content: space-between;">
+
+                 
+                
+                    <div class="stats__item" style="width: 50% !important;">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <p class="stats__item__header" style="text-align: center;"> Time spent on Task vs Distraction (%)</p>
+                            <!--<select >
+                                <option>Today</option>
+                                <option>This week</option>
+                            </select>-->
+                        </div>
+                        <canvas id="focusVsDistractionChart" >
+    
+                        </canvas>
+                    </div>
+                    <div class="stats__item" style="width: 50% !important;">
+
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                        
+                            <p class="stats__item__header" style="text-align: center;">Distractions Closed vs Ignored</p>
+    
+                            <!--<select >
+                                <option>Today</option>
+                                <option>This week</option>
+                            </select>-->
+    
+                            <canvas id="distractionBlockRateChart" >
+        
+                            </canvas>
+                        </div>
+                    </div>
+
+                    
+                </div>
+                <div id="stats" class="stats" style="display: block !important;">
+                
+                    <div class="stats__item" style="width: 100% !important;">
+
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                        
+                            <p class="stats__item__header" style="text-align: center;">Tasks vs Distractions this week</p>
+    
+                         
+    
+                            <canvas id="weeklyDistractionTaskChart" >
+        
+                            </canvas>
+                        </div>
+                    </div>
+
+                    
+                </div>
+               
+                
+                <!-- 
+                <div class="stats__container">
+                    <div class="stats__item">
+                        
+                        <p class="stats__item__header">Most distracting sites</p>
+
+                        <div class="stats-mosts-distracting">
+                            <div  style="width: 100%;display: flex; justify-content: space-between; color: white; box-sizing: border-box;">
+                                <p>google.com</p>
+                                <p>40 mins</p>
+                            </div>
+                        </div> 
+                    </div>
+                </div> -->
+                
+            </div>
+            <div class="create landing-container">
+                <div class="create-textarea">
+                   
+
+                    <div style="margin-top: 8px; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between"> 
+                            <p style="
+                            font-weight: 400;
+                            font-size: 14px;
+                                color: darkgray;">What are you trying to do?</p>
+                                <p id="task-creation-error" style="color: red; display: none; margin-top: 2px;"></p>
+
+                                <p id="start-session-counter" style="color:darkgrey; font-size: 12px">140</p>
+                        </div>
+
+                        <textarea style="line-height: 1.7;" placeholder="enter a simple description of your task. E.g. 'research content for my fashion newsletter'" name="" id="textarea"></textarea>
+
+                        <div style="display: flex; justify-content: center">
+                            
+                        </div>
+
+                    </div>
+
+                    <div style="margin-top: 24px;" id="break-time">
+
+                        <p style="font-weight: 400;
+                        font-size: 14px;
+                            color: darkgray;">Break time schedule (optional)</p>
+
+                
+                            <div style="display: flex; flex-direction: column; margin-top: 8px;">
+
+                                
+                                <div style=" width: 100%; display:flex; align-items: center; background:rgba(169, 169, 169, 0.1);">
+                                    <div style=" display: flex; width: 75px; align-items: center; border-right: 1px solid rgba(211, 211, 211, 0.057); letter-spacing: 0.6px; font-size: 13px; height: 100%; padding: 0 8px; color: darkgrey; ">Duration</div>
+                                    <select id="break-duration-input" style="background: transparent">
+                                        <option value="" selected disabled default></option>
+                                        <option value="20"> 10 minutes</option>
+                                        <option value="30"> 20 minutes</option>
+                                        <option value="45"> 30 minutes</option>
+                                        <option value="60"> 1 hour</option>
+                                    </select>
+                                </div>
+
+                                <div style=" margin-bottom: 8px; width: 100%; display:flex; align-items: center; background:rgba(169, 169, 169, 0.1);">
+                                    <div style=" display: flex; width: 75px; align-items: center; border-right: 1px solid rgba(211, 211, 211, 0.057); letter-spacing: 0.6px; font-size: 13px; height: 100%; padding: 0 8px; color: darkgrey; ">Frequency</div>
+
+                                    <select id="break-frequency"  style="background: transparent !important;">
+                                        <option value="" selected disabled default> Choose frequency</option>
+                                        <option value="20"> Every 20 minutes</option>
+                                        <option value="30"> Every 30 minutes</option>
+                                        <option value="45"> Every 45 minutes</option>
+                                        <option value="60"> Every 1 hour</option>
+                                        <option value="120"> Every 2 hours</option>
+                                    </select>
+
+                                </div>
+
+                                <!--<p id="delete-break" style="
+                                font-size: 13px; font-weight: 500;
+                                color: lightgrey; cursor:pointer; 
+                                color: orange; margin-top: 8px;"> - Delete break time</p>-->
+
+                            
+                            </div>
+                    </div>
+
+
+                    
+                    <div class="create-textarea-footer" style="display: flex; flex-direction: row; align-items: center; justify-content: flex-end; ">
+                        <!--<button id="add-break" style=" font-size: 13px; 
+                            font-weight: 500; 
+                            background: whitesmoke;
+
+                            margin-right: 8px;
+                            width: 35%;
+
+                            
+                            color: lightgrey; cursor:pointer;; 
+                            color:  black;
+                            border: 1px solid white;
+                            justify-content: center;
+                            display: flex; align-items: center;"> 
+                       
+                        Add break time</button> -->
+                        <button style="                            width: 35%;
+                        " id="start-session-btn">Start Session</button>
+                    </div>
+                </div>
+
+            </div>
+    
+            <div id="recent-tasks" class="recent-tasks landing-container" style="display: none">
+                <div class="recent-tasks-header">
+                    <p style="font-weight: 500;
+                    font-size: 13px;
+                    line-height: 10px;
+                    /* identical to box height */
+                    
+                    display: flex;
+                    align-items: center;
+                    font-weight: 600;
+                    
+                    color: lightgrey;">Recent tasks (last 48 hours)</p>
+                </div>
+    
+                <div style="margin-top: 8px; background: rgba(255, 255, 255, 0.171);" id="recent-tasks-content" > 
+                    
+                </div>
+    
+            </div> 
+
+            <div style="display: flex; justify-content: center;"> 
+                <!--<button style="background: transparent; color: lightgrey !important; border: 2px solid lightgrey;">View your insights</button> -->
+            </div>
+    </div>
+
+
+
+    <div id="task-container" class="task-container landing-container" style="display: none;">
+        <div class="task-details">
+            <div>
+
+                <p id="current-task" style="font-weight: 500; color: darkgrey;">Current session</p>
+                <p id="task-summary">Research design inspirations and design on Figma</p>
+
+                <div style="display: flex; align-items: center;">
+                    <svg style="margin-right: 3px" width="10" height="10" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.9792 0.166687C9.47917 0.166687 0.166672 9.50002 0.166672 21C0.166672 32.5 9.47917 41.8334 20.9792 41.8334C32.5 41.8334 41.8333 32.5 41.8333 21C41.8333 9.50002 32.5 0.166687 20.9792 0.166687ZM27.8542 30.8125L18.9167 21.8542V10.5834H23.0833V20.1459L30.8125 27.875L27.8542 30.8125Z" fill="darkgrey"/>
+                    </svg>
+                        
+                    <p id="task-timer" style="color:darkgrey"></p>
+                </div>
+            </div>
+            <button style="cursor: pointer;" id="stop-session">Stop</button>
+        </div>
+
+        <div class="grid-tasks" style="color: yellowgreen !important">
+            <div id='distractions-count'>
+                0 distractions detected
+
+            </div>
+            <div id="distraction-disallowed" style="display: flex; flex-direction: column;">
+                <p id="distraction-timer" style="color: #A90F3D">0 mins</p>
+                <p style="color:  #A90F3D">spent on distractions</p>
+
+            </div>
+            <div  style="display: flex; flex-direction: column;">
+                <p id="distractions-closed" style="color: #4ECB71"> 0 distractions closed</p>
+                
+
+            </div>
+            
+        </div>
+        <!-- 
+        <div class="task-header" style="display: flex; flex-direction: column;">
+            <div>
+                <div style="display: flex; flex-direction: column;">
+                    <p style="font-weight: 500; font-size: 14px; color: darkgrey;">Task</p>
+                    <p style="font-size: 16px; margin-top: 3px;">Create ontent for social media campaign
+                    </p >
+                    <p style="font-weight: 500; font-size: 14px; color: darkgrey">1hr 25s</p>
+                </div>
+
+            </div>
+
+            <div style="margin-top: 8px;">
+                <p style="background:#A90F3D; font-size: 13px; padding: 8px; border-radius: 50px; width: fit-content; color: white; font-weight: 400;">Blocked 25 distractions</p>
+            </div>
+
+        </div> -->
+
+        <div class="closed" style= "height:50px; margin: auto; margin-top: 24px; margin-bottom: 16px; display: flex; align-items: center; width:80%">
+            
+            
+                
+            <div style="display: flex; 
+                align-items: center; 
+                background: rgba(227, 255, 240, 0.15);
+                padding: 8px;
+                width: 100%;
+                margin-bottom: 8px;
+                border-radius: 10px;">
+                    <svg style="margin-right:8px" width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.61667 10.375L6.20417 6.9625C5.93333 7.17917 5.62188 7.35069 5.26979 7.47708C4.91771 7.60347 4.54306 7.66667 4.14583 7.66667C3.16181 7.66667 2.32908 7.32596 1.64767 6.64454C0.965889 5.96276 0.625 5.12986 0.625 4.14583C0.625 3.16181 0.965889 2.3289 1.64767 1.64713C2.32908 0.965708 3.16181 0.625 4.14583 0.625C5.12986 0.625 5.96276 0.965708 6.64454 1.64713C7.32596 2.3289 7.66667 3.16181 7.66667 4.14583C7.66667 4.54306 7.60347 4.91771 7.47708 5.26979C7.35069 5.62188 7.17917 5.93333 6.9625 6.20417L10.375 9.61667L9.61667 10.375ZM4.14583 6.58333C4.82292 6.58333 5.39853 6.34644 5.87267 5.87267C6.34644 5.39853 6.58333 4.82292 6.58333 4.14583C6.58333 3.46875 6.34644 2.89314 5.87267 2.419C5.39853 1.94522 4.82292 1.70833 4.14583 1.70833C3.46875 1.70833 2.89314 1.94522 2.419 2.419C1.94522 2.89314 1.70833 3.46875 1.70833 4.14583C1.70833 4.82292 1.94522 5.39853 2.419 5.87267C2.89314 6.34644 3.46875 6.58333 4.14583 6.58333Z" fill="#D3D3D3"/>
+                    </svg>
+                    <input id="search" style="background-color: transparent; border: none; color: white; width: 100%;" type="text" placeholder="search closed tabs">
+                
+            </div>
+        </div>
+
+        <div id="search-results-content" style="display:none;         border: 0.5px solid rgba(211, 211, 211, 0.116);            margin: 0 16px;">
+            
+        </div>
+
+
+        <div id="work-tabs" class="work-tabs">
+            <div class="work-tabs-header" style="display: flex; justify-content: space-between;">
+                <div style="display: flex;">
+                    <svg style="margin-right: 8px;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 10C2.76 10 2.55 10.09 2.41 10.25C2.27 10.4 2.21 10.62 2.24 10.86L2.74 13.85C2.82 14.5 3.4 15 4 15H7C7.64 15 8.36 14.44 8.5 13.82L9.56 10.63C9.6 10.5 9.57 10.31 9.5 10.19C9.39 10.07 9.22 10 9 10H3ZM7 17H4C2.38 17 0.960002 15.74 0.760002 14.14L0.260002 11.15C0.150002 10.3 0.390002 9.5 0.910002 8.92C1.43 8.34 2.19 8 3 8H9C9.83 8 10.58 8.35 11.06 8.96C11.17 9.11 11.27 9.27 11.35 9.45C11.78 9.36 12.22 9.36 12.64 9.45C12.72 9.27 12.82 9.11 12.94 8.96C13.41 8.35 14.16 8 15 8H21C21.81 8 22.57 8.34 23.09 8.92C23.6 9.5 23.84 10.3 23.74 11.11L23.23 14.18C23.04 15.74 21.61 17 20 17H17C15.44 17 13.92 15.81 13.54 14.3L12.64 11.59C12.26 11.31 11.73 11.31 11.35 11.59L10.43 14.37C10.07 15.82 8.56 17 7 17ZM15 10C14.78 10 14.61 10.07 14.5 10.19C14.42 10.31 14.4 10.5 14.45 10.7L15.46 13.75C15.64 14.44 16.36 15 17 15H20C20.59 15 21.18 14.5 21.25 13.89L21.76 10.82C21.79 10.62 21.73 10.4 21.59 10.25C21.5154 10.1684 21.4241 10.1038 21.3223 10.0606C21.2205 10.0175 21.1105 9.9968 21 10H15Z" fill="#4ECB71"/>
+                        </svg>
+                        
+                    <div>
+                        <p>Task</p>
+                        <p id="tasks-tabs-closed"> 0 closed tabs</p>
+                    </div>
+                </div>
+
+                <div id="tasks-tabs-closed-dropdown" style="cursor: pointer;">
+                    <svg   width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 10L12 15L17 10H7Z" fill="#0FA958"/>
+                        </svg>
+                        
+                        
+                </div>
+
+                <div id="tasks-tabs-opened-dropdown" style="cursor: pointer; display: none; border: 1px solid white;">
+                    <svg width="24" height="24" viewBox="0 0 24 24"fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 0L10 5L0 5L5 0Z" fill="#0FA958"/>
+                    </svg>
+                        
+                        
+                </div>
+
+            </div>
+            <div id="task-tabs-content" class="work-tabs-content tabs-group-content" style="display: none;">
+                
+                
+                
+            </div>
+        </div>
+
+
+
+        <div id="dis-tabs" class="dis-tabs">
+            <div class="dis-tabs-header tabs-group">
+
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+
+                    <div style="display: flex; width: 100%;">
+
+                        <svg style="margin-right: 8px;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.075 21C8.80833 21 8.55433 20.95 8.313 20.85C8.07167 20.75 7.859 20.6083 7.675 20.425L3.575 16.325C3.39167 16.1417 3.25 15.929 3.15 15.687C3.05 15.445 3 15.191 3 14.925V9.075C3 8.80833 3.05 8.55433 3.15 8.313C3.25 8.07167 3.39167 7.859 3.575 7.675L7.675 3.575C7.85833 3.39167 8.071 3.25 8.313 3.15C8.555 3.05 8.809 3 9.075 3H14.925C15.1917 3 15.446 3.05 15.688 3.15C15.93 3.25 16.1423 3.39167 16.325 3.575L20.425 7.675C20.6083 7.85833 20.75 8.071 20.85 8.313C20.95 8.555 21 8.809 21 9.075V14.925C21 15.1917 20.95 15.446 20.85 15.688C20.75 15.93 20.6083 16.1423 20.425 16.325L16.325 20.425C16.1417 20.6083 15.929 20.75 15.687 20.85C15.445 20.95 15.191 21 14.925 21H9.075ZM12 13.4L14.175 15.575C14.3583 15.7583 14.5833 15.85 14.85 15.85C15.1167 15.85 15.35 15.75 15.55 15.55C15.7333 15.3667 15.825 15.1333 15.825 14.85C15.825 14.5667 15.7333 14.3333 15.55 14.15L13.4 12L15.575 9.825C15.7583 9.64167 15.85 9.41667 15.85 9.15C15.85 8.88333 15.75 8.65 15.55 8.45C15.3667 8.26667 15.1333 8.175 14.85 8.175C14.5667 8.175 14.3333 8.26667 14.15 8.45L12 10.6L9.825 8.425C9.64167 8.24167 9.41667 8.15 9.15 8.15C8.88333 8.15 8.65 8.25 8.45 8.45C8.26667 8.63333 8.175 8.86667 8.175 9.15C8.175 9.43333 8.26667 9.66667 8.45 9.85L10.6 12L8.425 14.175C8.24167 14.3583 8.15 14.5833 8.15 14.85C8.15 15.1167 8.25 15.35 8.45 15.55C8.63333 15.7333 8.86667 15.825 9.15 15.825C9.43333 15.825 9.66667 15.7333 9.85 15.55L12 13.4ZM9.1 19H14.9L19 14.9V9.1L14.9 5H9.1L5 9.1V14.9L9.1 19Z" fill="#A90F3D"/>
+                        </svg>
+                            
+                            
+                        <div>
+    
+                            <p>Distractions</p>
+                            <p id="dis-tabs-closed"> 0 tabs closed</p>
+                        </div>
+                    </div>
+
+                    <div style="cursor: pointer;" id="dis-tabs-closed-dropdown">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10L12 15L17 10H7Z" fill="#A90F3D"/>
+                            </svg>
+                            
+                    </div>
+                   
+                </div>
+
+                    
+
+                
+            </div>
+            <div id="dis-tabs-content" class="dis-tabs-content tabs-group-content" style="display: none;">
+                
+                
+            </div>
+        </div>
+        <div id="dis-tabs" class="dis-tabs misc-tabs" >
+            <div class="dis-tabs-header tabs-group "style=" margin-bottom: 32px">
+
+                <div style="display: flex; justify-content: space-between; width: 100%;">
+
+                    <div style="display: flex; width: 100%;">
+
+                        <svg style="margin-right: 8px;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.075 21C8.80833 21 8.55433 20.95 8.313 20.85C8.07167 20.75 7.859 20.6083 7.675 20.425L3.575 16.325C3.39167 16.1417 3.25 15.929 3.15 15.687C3.05 15.445 3 15.191 3 14.925V9.075C3 8.80833 3.05 8.55433 3.15 8.313C3.25 8.07167 3.39167 7.859 3.575 7.675L7.675 3.575C7.85833 3.39167 8.071 3.25 8.313 3.15C8.555 3.05 8.809 3 9.075 3H14.925C15.1917 3 15.446 3.05 15.688 3.15C15.93 3.25 16.1423 3.39167 16.325 3.575L20.425 7.675C20.6083 7.85833 20.75 8.071 20.85 8.313C20.95 8.555 21 8.809 21 9.075V14.925C21 15.1917 20.95 15.446 20.85 15.688C20.75 15.93 20.6083 16.1423 20.425 16.325L16.325 20.425C16.1417 20.6083 15.929 20.75 15.687 20.85C15.445 20.95 15.191 21 14.925 21H9.075ZM12 13.4L14.175 15.575C14.3583 15.7583 14.5833 15.85 14.85 15.85C15.1167 15.85 15.35 15.75 15.55 15.55C15.7333 15.3667 15.825 15.1333 15.825 14.85C15.825 14.5667 15.7333 14.3333 15.55 14.15L13.4 12L15.575 9.825C15.7583 9.64167 15.85 9.41667 15.85 9.15C15.85 8.88333 15.75 8.65 15.55 8.45C15.3667 8.26667 15.1333 8.175 14.85 8.175C14.5667 8.175 14.3333 8.26667 14.15 8.45L12 10.6L9.825 8.425C9.64167 8.24167 9.41667 8.15 9.15 8.15C8.88333 8.15 8.65 8.25 8.45 8.45C8.26667 8.63333 8.175 8.86667 8.175 9.15C8.175 9.43333 8.26667 9.66667 8.45 9.85L10.6 12L8.425 14.175C8.24167 14.3583 8.15 14.5833 8.15 14.85C8.15 15.1167 8.25 15.35 8.45 15.55C8.63333 15.7333 8.86667 15.825 9.15 15.825C9.43333 15.825 9.66667 15.7333 9.85 15.55L12 13.4ZM9.1 19H14.9L19 14.9V9.1L14.9 5H9.1L5 9.1V14.9L9.1 19Z" fill="darkgrey"/>
+                        </svg>
+                            
+                            
+                        <div>
+    
+                            <p>Miscellaneous</p>
+                            <p id="dis-tabs-closed"> 0 tabs closed</p>
+                        </div>
+                    </div>
+
+                    <div style="cursor: pointer;" id="dis-tabs-closed-dropdown">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10L12 15L17 10H7Z" fill="darkgrey"/>
+                            </svg>
+                            
+                    </div>
+                   
+                </div>
+
+                    
+
+                
+            </div>
+            <div id="dis-tabs-content" class="dis-tabs-content tabs-group-content" style="display: none;">
+                
+                
+            </div>
+        </div>
+    </div>
+    <div class="trial-ended landing-container" id="trial-ended"  style="display: none;">
+        <div class="trial-ended__container" style="padding: 16px;;">
+            <p id="trial-ended__notif" style="color: white; font-size: 14px; margin-bottom: 16px; line-height: 1.5; text-align: center;">
+                Your free trial has ended. You can upgrade your plan and click on <b>Refresh</b> to continue blocking distractions.
+            </p>
+
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+
+                <button id="plan-upgrade" style="margin-bottom: 16px">Upgrade</button>
+                <button id="refresh-plan-status">Upgraded? Refresh</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="report" class="report landing-container" style="display: none">
+        <div id="settings-back" style="margin-bottom: 16px; cursor: pointer; padding: 16px;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22.0156 13.3556C22.0156 13.1564 22.0156 12.9572 22.0156 12.75C22.0156 12.5428 22.0156 12.3436 22.0156 12.1364L23.5456 10.7977C23.8277 10.5491 24.0127 10.2088 24.0681 9.83694C24.1236 9.4651 24.0457 9.08564 23.8484 8.76562L21.9678 5.57812C21.8281 5.33608 21.6271 5.13505 21.3852 4.99518C21.1432 4.85531 20.8687 4.78154 20.5892 4.78125C20.416 4.77992 20.2438 4.80684 20.0792 4.86094L18.1428 5.51438C17.8085 5.29221 17.4598 5.09255 17.0989 4.91672L16.6925 2.90859C16.6196 2.54172 16.42 2.21216 16.1287 1.97761C15.8373 1.74306 15.4727 1.61846 15.0987 1.62563H11.3694C10.9954 1.61846 10.6308 1.74306 10.3395 1.97761C10.0481 2.21216 9.8485 2.54172 9.77563 2.90859L9.36922 4.91672C9.00579 5.09251 8.6544 5.29216 8.31734 5.51438L6.42078 4.82906C6.25447 4.78573 6.08225 4.76959 5.91078 4.78125C5.6313 4.78154 5.3568 4.85531 5.11483 4.99518C4.87286 5.13505 4.67193 5.33608 4.53219 5.57812L2.65156 8.76562C2.46556 9.08516 2.39644 9.45943 2.45605 9.82432C2.51565 10.1892 2.70027 10.522 2.97828 10.7658L4.48437 12.1444V12.75C4.48437 12.75 4.48437 13.1564 4.48437 13.3636L2.97828 14.7023C2.69242 14.9478 2.50275 15.2866 2.44294 15.6585C2.38313 16.0305 2.45704 16.4117 2.65156 16.7344L4.53219 19.9219C4.67193 20.1639 4.87286 20.365 5.11483 20.5048C5.3568 20.6447 5.6313 20.7185 5.91078 20.7187C6.08398 20.7201 6.25624 20.6932 6.42078 20.6391L8.35719 19.9856C8.69151 20.2078 9.04025 20.4074 9.40109 20.5833L9.8075 22.5914C9.88037 22.9583 10.08 23.2878 10.3713 23.5224C10.6627 23.7569 11.0273 23.8815 11.4013 23.8744H15.1625C15.5365 23.8815 15.9011 23.7569 16.1924 23.5224C16.4838 23.2878 16.6834 22.9583 16.7562 22.5914L17.1627 20.5833C17.5261 20.4075 17.8775 20.2078 18.2145 19.9856L20.143 20.6391C20.3075 20.6932 20.4798 20.7201 20.653 20.7187C20.9325 20.7185 21.2069 20.6447 21.4489 20.5048C21.6909 20.365 21.8918 20.1639 22.0316 19.9219L23.8484 16.7344C24.0344 16.4148 24.1036 16.0406 24.044 15.6757C23.9843 15.3108 23.7997 14.978 23.5217 14.7342L22.0156 13.3556ZM20.5892 19.125L17.8559 18.2006C17.2161 18.7426 16.4848 19.1662 15.6964 19.4517L15.1306 22.3125H11.3694L10.8036 19.4836C10.0214 19.19 9.29409 18.7671 8.65203 18.2325L5.91078 19.125L4.03016 15.9375L6.19766 14.025C6.05031 13.2001 6.05031 12.3557 6.19766 11.5308L4.03016 9.5625L5.91078 6.375L8.64406 7.29937C9.2839 6.75741 10.0152 6.33377 10.8036 6.04828L11.3694 3.1875H15.1306L15.6964 6.01641C16.4786 6.30999 17.2059 6.73291 17.848 7.2675L20.5892 6.375L22.4698 9.5625L20.3023 11.475C20.4497 12.2999 20.4497 13.1443 20.3023 13.9692L22.4698 15.9375L20.5892 19.125Z" fill="#D3D3D3"/>
+                <path d="M13.25 17.5312C12.3044 17.5312 11.38 17.2508 10.5937 16.7255C9.80741 16.2001 9.19458 15.4534 8.8327 14.5797C8.47082 13.706 8.37614 12.7447 8.56062 11.8172C8.74511 10.8898 9.20048 10.0378 9.86915 9.36915C10.5378 8.70048 11.3898 8.24511 12.3172 8.06062C13.2447 7.87614 14.206 7.97082 15.0797 8.3327C15.9534 8.69458 16.7001 9.30741 17.2255 10.0937C17.7508 10.88 18.0312 11.8044 18.0312 12.75C18.0376 13.3797 17.9183 14.0043 17.6803 14.5872C17.4423 15.1702 17.0904 15.6998 16.6451 16.1451C16.1998 16.5904 15.6702 16.9423 15.0872 17.1803C14.5043 17.4183 13.8797 17.5376 13.25 17.5312ZM13.25 9.5625C12.8287 9.55269 12.4098 9.62843 12.0187 9.78514C11.6275 9.94185 11.2722 10.1763 10.9742 10.4742C10.6763 10.7722 10.4419 11.1275 10.2851 11.5187C10.1284 11.9098 10.0527 12.3287 10.0625 12.75C10.0527 13.1713 10.1284 13.5902 10.2851 13.9813C10.4419 14.3725 10.6763 14.7278 10.9742 15.0258C11.2722 15.3237 11.6275 15.5581 12.0187 15.7149C12.4098 15.8716 12.8287 15.9473 13.25 15.9375C13.6713 15.9473 14.0902 15.8716 14.4813 15.7149C14.8725 15.5581 15.2278 15.3237 15.5258 15.0258C15.8237 14.7278 16.0581 14.3725 16.2149 13.9813C16.3716 13.5902 16.4473 13.1713 16.4375 12.75C16.4473 12.3287 16.3716 11.9098 16.2149 11.5187C16.0581 11.1275 15.8237 10.7722 15.5258 10.4742C15.2278 10.1763 14.8725 9.94185 14.4813 9.78514C14.0902 9.62843 13.6713 9.55269 13.25 9.5625Z" fill="#D3D3D3"/>
+                </svg>
+                
+                
+        </div>            
+        <div class="create-container">
+            <div class="create-textarea">
+                <p style="font-weight: 600;
+                font-size: 15px;
+                line-height: 19px; color: darkgrey;">Feedback</p>
+                <textarea name=""></textarea>
+                <div class="create-textarea-footer" style="display: flex; justify-content: space-between;">
+                    <button id="report-btn">Reach out</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+        
+
+    </div>
+
+
+    <div class="footer" style="font-size: 10px; display: flex; justify-content: space-between; color: lightgrey; padding: 32px 16px; display: none; ">
+        <p>
+
+            Tell a friend
+        </p>
+
+        <p style="cursor: pointer;" id="report-trigger">Bug or Feedback?</p>
+    </div>
+
+
+  
+    <div class="trial" id="trial" style="display: none; background: #ffffff2f; color: white; margin-top: 100px; position: sticky; left: 0; bottom: 0;">
+        <div class="trial__container" style="display: flex; align-items: center; color: white; padding: 16px; justify-content: center;">
+            <p id="trial-left" style="margin-right:8px;"></p>
+        </div>
+    </div>
+
+
+    
+    <script src="./client.js"></script>
+</html>
+
+
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+
+    }
+    html {
+        background: #222436;
+        width: 400px;
+        padding: 0;
+        margin: 0;
+        max-height: max-content;
+    }
+
+    .body {
+        width: 80%;
+        margin: auto;
+    }
+
+    .lock-item {
+        margin-bottom: 8px; box-sizing: border-box; display: flex; justify-content: space-between;
+    }
+
+   
+
+    .lock-item-cancel:hover {
+        cursor: pointer;
+        filter: saturate(0.5);
+    }
+
+
+    #loading {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #auth {
+        padding: 16px;
+    }
+
+    .form-input {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 16px;
+    }
+
+    .form-input >label {
+        color: white;
+        margin-bottom: 5px;
+    }
+
+    .form-input > input {
+        background: rgba(169, 169, 169, 0.1);
+    
+        border-radius: 5px;
+    }
+
+     .underline {
+        cursor: pointer;
+        text-decoration: underline;
+        
+    }
+     .underline:hover {
+        color: #4ECB71;
+    }
+
+    .create-container {
+        width: 100%;
+        margin: auto;
+        margin-bottom: 32px
+    }
+
+    .create-textarea {
+        padding: 16px;
+    }
+
+     textarea {
+        width: 100%;
+        background: rgba(169, 169, 169, 0.1);
+        border-radius: 5px;
+        height: 100px;
+        resize: none;
+        border: none;
+        color: rgb(230, 230, 230);;
+        padding: 8px 8px;;
+        margin-bottom: 8px;
+        margin-top: 8px;
+        font-family: inherit; font-size: inherit;
+        font-size: 13px;
+        font-weight: 300;
+
+    }
+    textarea:hover {
+        outline: none;
+    }
+    textarea:focus {
+        outline: none;
+    }
+    .create-textarea-footer > p {
+        color: #FAFAFA;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 11px;
+    }
+
+    .create-textarea-footer > button {
+        padding: 8px 16px;
+   
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        width: 50%;
+    }
+
+    .create-textarea-footer > button:hover {
+       transform: blur(200px);
+       background-color: #4ECB71;
+       border: 2px solid #4ECB71;
+
+       color: white;
+    }
+
+    .recent-tasks{
+        padding: 16px;
+    }
+
+    .recent-tasks-task {
+        padding: 8px;;
+        background: transparent;
+        color: rgb(230, 230, 230);;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 15px;
+        line-height: 1.4;
+        font-size: 13px !important;
+
+    }
+    .recent-tasks-detail {
+        display: flex;
+        flex-direction: column;
+        font-size: 13px !important;
+
+    }
+    .recent-tasks-detail > button{
+        
+        font-size: 13px !important;
+
+    }
+
+    .recent-tasks-task-detail-distractions {
+        color: #A90F3D;
+        font-size: 13px;
+    }
+
+    .recent-tasks-task > button {
+        padding: 2px 16px !important;
+        color: lightgrey;
+        border: 1px solid lightgrey;
+        background-color: transparent;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 13px !important;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .grid-tasks {
+        display: grid;
+        grid-template-columns: 33% 33% 33%;
+    }
+
+    .grid-tasks > div {
+        padding: 16px;
+        color: rgb(230, 230, 230);;
+        width: 100%;
+        border: 0.5px solid rgba(211, 211, 211, 0.116);
+        box-sizing: border-box;
+        font-weight: 400;
+        font-size: 14px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #distractions-count {
+        color: orange;
+    }
+
+    
+
+    .task-details {
+        color: rgb(230, 230, 230);;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+    }
+
+    .task-details > button {
+        padding: 8px 16px;
+        color: white;
+        background-color: #4ECB71;
+        border: none;
+        border-radius: 5px;
+    }
+
+    #current-task {
+        font-weight: 500; 
+        color: darkgrey;
+        font-size: 12px;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    #task-summary{
+        font-size: 15px;
+        font-weight: 400;
+        white-space: pre-wrap;
+        max-width: 300px;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+
+    }
+
+    #task-timer {
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    
+
+
+
+
+
+    .task {
+        background: white;
+    }
+    .task-header {
+        background: rgba(15, 169, 88, 0.2);
+
+       display: flex;
+       justify-content: space-between;
+       color: rgb(230, 230, 230);;
+       width: 100%;
+       box-sizing: border-box;
+       padding: 16px;
+    }
+
+    input:focus {
+            outline: 0
+    }
+
+
+    .work-tabs {
+
+    }
+    .tabs-group {
+        width: 80%;
+        margin: auto;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        padding: 16px;
+        color: #4ECB71;
+        font-size: 15px;
+        display: flex;
+    }
+
+    .tabs-group > svg {
+        margin-right: 8px;
+    }
+
+.tabs-group-tab-details > p:first-child{
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tabs-group-tab-details > p:last-child{
+    font-weight: 300;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+    .work-tabs-header {
+        width: 80%;
+        margin: auto;
+        background: rgba(15, 169, 88, 0.2);
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        padding: 16px;
+        color: #4ECB71;
+        font-size: 15px;
+        display: flex;
+    }
+    .work-tabs-header > svg {
+        margin-right: 8px;
+    }
+    .tabs-group-content {
+        width: 75%;
+        height: 0px;
+        margin: auto;
+        margin-bottom: 32px;
+        background: rgba(15, 169, 88, 0.2);
+        transition: all 1s ease-in-out;
+    }
+
+    .enter {
+        height: fit-content;
+    }
+
+
+    .tabs-group-tab {
+        padding: 16px 18px;
+        display: grid;
+        grid-template-columns: 10% 60% 19%;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 0.5px solid rgba(15, 15, 15, 0.208);
+
+
+
+    }
+
+    .tabs-group-tab >svg,img {
+       margin-right: 8px;
+       height: 24px;
+       width: 24px;
+       
+    }
+    .tabs-group-tab >button {
+        cursor: pointer;
+        background: transparent;
+        padding: 8px;
+        color: #4ECB71;
+        font-size: 11px;
+        border: 0;
+        border: 1px solid #4ECB71;
+        box-sizing: border-box;
+        width: 100%;
+        border-radius: 50px;
+        width: fit-content;
+    }
+    .tabs-group-tab >button:hover {
+        background: #4ECB71 ;
+        color: white;
+        
+    }
+
+   .tabs-group-tab-details {
+        color: rgb(144, 144, 144);
+        font-size: 13px;
+    }
+
+
+    .dis-tabs-header{
+        background: rgba(169, 15, 61, 0.2);
+        color: #A90F3D;
+    }
+
+    .dis-tabs-tab {
+    }
+
+    .dis-tabs-tab > button {
+        border: 1px solid  #A90F3D !important;
+        color: #A90F3D !important;
+
+
+    }
+    .dis-tabs-tab > button:hover{
+        background: #A90F3D !important;
+        color: white !important;
+
+
+    }
+    .dis-tabs-content {
+        background-color: rgba(169, 15, 61, 0.15);
+        max-height: 600px;
+        overflow-y: scroll;
+    }
+    .task-tabs-content {
+        max-height: 600px;
+        overflow-y: scroll;
+    }
+
+
+
+
+
+#distraction-restore-btn {
+    border: 1px solid #A90F3D;
+    color: #A90F3D;
+}
+
+.lds-container {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 16px;
+  position: relative;
+}
+
+.lds-hourglass {
+  display: inline-block;
+  width: 40px;
+  padding: 20px 0;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+}
+.lds-hourglass:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 6px;
+  box-sizing: border-box;
+  border: 10px solid #4ECB71;
+  border-color: #4ECB71 transparent #4ECB71 transparent;
+  animation: lds-hourglass 1.2s infinite;
+}
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}
+
+
+.logo {
+    padding: 16px 16px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo > p {
+    font-size: 14px;
+
+}
+
+.logo > svg {
+    cursor: pointer;
+}
+
+.settings {
+
+}
+
+.settings-container {
+    padding: 16px; 
+}
+
+.settings-characters {
+
+}
+
+.settings-characters > h2 {
+    color: darkgrey;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+h2 {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: 300;
+}
+
+.settings-character {
+    display: flex;
+    background: rgba(169, 169, 169, 0.1);
+    padding: 16px;
+    cursor: pointer;
+    align-items: center;
+    margin-bottom: 3px;
+    
+}
+.settings-character:hover {
+    
+    background: rgba(169, 169, 169, 0.453);
+    
+}
+
+
+.settings-character  img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid whitesmoke;
+}
+
+.settings-character-details > p:first-child{
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+.settings-character-details > p:last-child{
+    color: rgb(199, 196, 196);
+    font-size: 13px;;
+    line-height: 1.3;
+    font-weight: 300;
+}
+
+.settings-tabs {
+    padding: 16px;
+}
+
+.tone-chosen {
+    border-left: 5px solid#4ECB71;
+}
+
+input, select {
+    border: 0.5px solid rgba(226, 232, 240);
+        border-image-repeat: stretch;
+        border-image-source: none;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        padding: 16px;
+        outline: none;
+        font-size: 15px;
+        color: #36454F;
+        font-weight: 300;
+        appearance: none;
+        border: none;
+        letter-spacing: 0.6px;
+        background: rgba(169, 169, 169, 0.1);
+        padding: 8px;
+        color: white;
+        font-size: 13px;
+}
+
+button {
+    padding: 8px 16px;
+    background: #4ECB71;
+    border: 2px solid #4ECB71;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #338e4d;
+    border: 2px solid #338e4d;
+}
+button:disabled {
+    background: lightgrey;
+    color: white;
+    border: 1px solid lightgrey;
+}
+
+
+.onboarding {
+
+}
+
+.landing > h3 {
+    font-size: 20px; 
+    width: 80%; 
+    margin: auto;
+    color: white;
+    text-align: center;
+}
+
+.landing > p {
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    width: 80%;
+    margin: auto;
+    margin-top: 16px;
+    line-height: 1.7;
+}
+
+.tabs {
+    display: flex;
+    padding: 16px;
+}
+
+.tabs > .landing-tab {
+    color: grey;
+    cursor: pointer;
+    padding:  3px 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+
+}
+
+.tab:hover {
+    background: rgba(211, 211, 211, 0.268);
+}
+
+
+.tab-selected {
+    color: white;
+    border-bottom: 3px solid #4ECB71 !important;
+}
+
+
+.stats {
+    
+}
+
+.stats__item {
+    width: 100%;
+    padding: 16px;;
+    border: 0.5px solid rgba(245, 245, 245, 0.065);
+    box-sizing: border-box;
+    margin-bottom: 32px;
+}
+
+.stats__item__header {
+    color: grey;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    line-height: 20px;
+}
+
+.stats__item select {
+    margin: 8px 0;
+    margin-top: 0;
+    text-align: center;
+    color: grey;
+}
+
+
+.misc-tabs {
+   
+}
+
+.misc-tabs >  .tabs-group {
+        background: rgba(128, 128, 128, 0.497);
+    }
+
+.misc-tabs > .tabs-group  p {
+    color: darkgrey;
+}
+</style>
