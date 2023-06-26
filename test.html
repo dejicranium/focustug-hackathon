@@ -8,288 +8,308 @@
 
         <div class="focustug-control" id="focustug-control">
             
-        <div class="focustug-control__container">
-            <div class="focustug-control__header">
-                <img src="./icon32.png" width="16" height="16" alt="">
-                FocusTug
-            </div>
-    
-            <div class="focustug-control__leaderboard" style="display: none;">
-                <p> Accountability Group (Default)</p>
-                <table> 
-                    <tr class="table-header">
-                        <td> User </td>
-                        <td> Focus % </td>
-                    </tr>
-                    <tr>
-                        <td> Deji</td>
-                        <td>50%</td>
-                    </tr>
-                    <tr>
-                        <td> Deji</td>
-                        <td>50%</td>
-                    </tr>
-                    <tr>
-                        <td> Deji</td>
-                        <td>50%</td>
-                    </tr>
+            
+   
+            <div class="focustug-control__container">
+                <div class="focustug-control__header">
+                    <img src="./icon32.png" width="16" height="16" alt="">
+                    FocusTug
+                </div>
+
+                <div class="focustug-control__tabs">
+                    <div class="focustug-control__tabs__tab selected_tab" >
+                        Session
+                    </div>
+                    <div class="focustug-control__tabs__tab">
+                        Insights
+                    </div>
+                </div>
+        
+                <div class="focustug-control__leaderboard" style="display: none">
+                    <p> Accountability Group</p>
+                    <table id="accountability-leaderboard"> 
+                        <tr class="table-header">
+                            <td> User </td>
+                            <td> Productivy (%) </td>
+                        </tr>
+                        
+                    </table>
+                    <p style="color :grey;  text-align: center; display: block; margin: 16px 0; font-size: 12px;"> </p>
+        
+        
+                </div>
+            
+        
+                <div class="focustug-control__leaderboard" style="display:none">
+                    <p> Distractions today</p>
+                    <table id="distractions-table"> 
+                        <tr class="table-header">
+                            <td> Site </td>
+                            <td> Time spent</td>
+                            <td>Actions</td>
+                        </tr>
+                        
+                       
                     
-                </table>
-    
-    
+                        
+                    </table>
+                    <p style="color :grey;  text-align: center; display: block; margin: 16px 0; font-size: 12px;"> </p>
+        
+        
+                </div>
+                
+                <div id="break-time-alert" 
+                class="landing-container"
+                    style=" 
+                    padding: 16px; 
+                    border-radius: 10px;
+                    display: none;
+                    
+                    box-sizing: border-box;">
+                <div style=" box-sizing: border-box; padding: 16px; 
+                    background: orange;  
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-radius: 10px;
+                    width: 100%;" class="break-time-alert-container">
+                    <div style="height: 100%;">
+        
+                        <p style="font-size: 18px; font-weight: 500; display: flex; align-items: center;">                                    
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                            </svg>
+                        Break time is due!</p>
+        
+                        <p style="font-size: 15px;" id="break-time-due"></p>
+                    </div>
+                    <button id="start-break" style="background: transparent !important; 
+                                                    margin-left: 21px;
+                                                    border: 2px solid black !important;
+                                                    color: black;"> 
+                    Start break</button>
+                </div>
+            </div>
+            <div id="break-time-ongoing"
+            class="landing-container" style=" padding: 16px; 
+                    box-sizing: border-box; display: none;">
+                <div style=" box-sizing: 
+                    border-box; padding: 16px; 
+                    border-radius: 10px;
+                    background: orange;  
+                    width: 100%; display: flex; justify-content: space-between; align-items: center;" class="break-time-alert-container">
+                    
+        
+                    <div style="display: flex;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                        </svg>
+                        
+                        <div>
+        
+                            <p style="font-weight: 500; font-size: 18px;">Break ongoing</p>
+                            <p style="font-size: 13px;" id="break-time-left"></p>
+                        </div>
+                    </div>
+                    <button id="end-break" style="background: transparent !important; 
+                            border: 2px solid black !important;
+                            font-weight: 500 !important;
+                            color: black;"> End</button>
+                </div>
             </div>
         
             
-            <div id="break-time-alert" 
-            class="landing-container"
-                style=" 
-                padding: 16px; 
-                border-radius: 10px;
-                display: none;
-                
-                box-sizing: border-box;">
-            <div style=" box-sizing: border-box; padding: 16px; 
-                background: orange;  
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-radius: 10px;
-                width: 100%;" class="break-time-alert-container">
-                <div style="height: 100%;">
-    
-                    <p style="font-size: 18px; font-weight: 500; display: flex; align-items: center;">                                    
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
-                        </svg>
-                    Break time is due!</p>
-    
-                    <p style="font-size: 15px;" id="break-time-due"></p>
-                </div>
-                <button id="start-break" style="background: transparent !important; 
-                                                margin-left: 21px;
-                                                border: 2px solid black !important;
-                                                color: black;"> 
-                Start break</button>
-            </div>
-        </div>
-        <div id="break-time-ongoing"
-        class="landing-container" style=" padding: 16px; 
-                box-sizing: border-box; display: none;">
-            <div style=" box-sizing: 
-                border-box; padding: 16px; 
-                border-radius: 10px;
-                background: orange;  
-                width: 100%; display: flex; justify-content: space-between; align-items: center;" class="break-time-alert-container">
-                
-    
-                <div style="display: flex;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
-                    </svg>
-                    
-                    <div>
-    
-                        <p style="font-weight: 500; font-size: 18px;">Break ongoing</p>
-                        <p style="font-size: 13px;" id="break-time-left"></p>
-                    </div>
-                </div>
-                <button id="end-break" style="background: transparent !important; 
-                        border: 2px solid black !important;
-                        font-weight: 500 !important;
-                        color: black;"> End</button>
-            </div>
-        </div>
-    
         
-    
-    
-            <div id="focustug-loading" class="lds-container" style="display: none; justify-content: center;">
-                <div class="lds-hourglass"></div>
-            </div>
-    
-            <div class="focustug-control__content" id='focustug-main-control'>
-                <div class="focustug-control-section focustug-control-taskarea">
-                    <p class="focustug-control-section__header">Start a new task</p>
-                    <textarea id="focustug-task-textarea" placeholder="Enter description of your task" style="margin-top: 8px"></textarea>
+        
+                <div id="focustug-loading" class="lds-container" style="display: none; justify-content: center;">
+                    <div class="lds-hourglass"></div>
                 </div>
-                <div class="focustug-control-section focustug-control-taskarea">
-                    <p class="focustug-control-section__header">Intensity</p>
-    
-                    <div style="display: grid; grid-template-columns: 48% 48%; justify-content: space-between">
-                        <div class="focustug-control-section__intensity focustug-intensity-chosen" id="intensity-hard">
-                            <p class="focustug-control-section__intensity__header">Very Intense</p>
-                            <p class="focustug-control-section__intensity__desc">Block every distraction</p>
-                        </div>
-                        <div class="focustug-control-section__intensity" id="intensity-mild">
-                            <p class="focustug-control-section__intensity__header">Mild</p>
-                            <p class="focustug-control-section__intensity__desc">Show a simple focus bar</p>
-                        </div>
+        
+                <div class="focustug-control__content" id='focustug-main-control'>
+                    <div class="focustug-control-section focustug-control-taskarea">
+                        <p class="focustug-control-section__header">Start a new task</p>
+                        <textarea id="focustug-task-textarea" placeholder="Enter description of your task" style="margin-top: 8px"></textarea>
                     </div>
-                    
-                </div>
-    
-                <div class="focustug-control-section focustug-control-timer">
-                    <p class="focustug-control-section__header">Timer</p>
-                    <div class="focustug-control-timer__container">
-    
-    
-                        <div style="display: flex; height: fit-content !important">
-    
-                            <div>
-                            
-                                <p id="work-time-display">1 hour</p>
-                                <p>Work</p>
+                    <div class="focustug-control-section focustug-control-taskarea">
+                        <p class="focustug-control-section__header">Intensity</p>
+        
+                        <div style="display: grid; grid-template-columns: 48% 48%; justify-content: space-between">
+                            <div class="focustug-control-section__intensity focustug-intensity-chosen" id="intensity-hard">
+                                <p class="focustug-control-section__intensity__header">Very Intense</p>
+                                <p class="focustug-control-section__intensity__desc">Block every distraction</p>
                             </div>
-                            <div>
-                                <button style=" background:  rgba(0, 0, 0, 0.299);;  margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='work-time-increase' class='timer-control'> 
+                            <div class="focustug-control-section__intensity" id="intensity-mild">
+                                <p class="focustug-control-section__intensity__header">Mild</p>
+                                <p class="focustug-control-section__intensity__desc">Show a simple focus bar</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+        
+                    <div class="focustug-control-section focustug-control-timer">
+                        <p class="focustug-control-section__header">Timer</p>
+                        <div class="focustug-control-timer__container">
+        
+        
+                            <div style="display: flex; height: fit-content !important">
+        
+                                <div>
+                                
+                                    <p id="work-time-display">1 hour</p>
+                                    <p>Work</p>
+                                </div>
+                                <div>
+                                    <button style=" background:  rgba(0, 0, 0, 0.299);;  margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='work-time-increase' class='timer-control'> 
+                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
+                                        </svg>
+                                            
+        
+                                    </button>
+                                    <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='work-time-decrease' class='timer-control'> 
+                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
+                                        </svg>
+                                            
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="display: flex; height: fit-content !important;">
+                                <div>
+                                    <p id="break-time-display">15 minutes</p>
+                                    <p>Break</p>
+                                </div>
+        
+                                <div>
+                                <button style="background: rgba(0, 0, 0, 0.299); margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='break-time-increase' class='timer-control'> 
                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
                                     </svg>
-                                        
-    
+        
                                 </button>
-                                <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='work-time-decrease' class='timer-control'> 
+                                <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='break-time-decrease' class='timer-control'> 
                                     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
                                     </svg>
-                                        
                                 </button>
                             </div>
-                        </div>
-                        <div style="display: flex; height: fit-content !important;">
-                            <div>
-                                <p id="break-time-display">15 minutes</p>
-                                <p>Break</p>
                             </div>
-    
-                            <div>
-                            <button style="background: rgba(0, 0, 0, 0.299); margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='break-time-increase' class='timer-control'> 
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
-                                </svg>
-    
-                            </button>
-                            <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='break-time-decrease' class='timer-control'> 
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
-                                </svg>
-                            </button>
-                        </div>
                         </div>
                     </div>
+                    <div class="focustug-control-section focustug-control-timer">
+                        <p class="focustug-control-section__header">Accountability Group</p>
+                       
+                        <select id="focustug-group-select" style="margin-top: 8px; width: 100%; background: rgba(255, 255, 255, 0.10); border: 0; padding: 16px; border-radius: 10px; color: white; font-size: 16px;">
+                           <!--- <option id="focustug-group-item">Flutterwave #199923</option>--->
+                        </select> 
+                
+                        <div id="focustug-new-group-container" style="margin-top: 8px; display: none">
+                            <label for="" style="margin-bottom: 8px; display: block;">Group Name</label>
+                            <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
+                        </div>
+                        <div id="focustug-join-group-container" style="margin-top: 8px; display: none">
+                            <label for="" style="margin-bottom: 8px; display: block;">Group Code</label>
+                            <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
+                        </div> 
+                       
+                        <div style="margin-top: 2px; color: grey; display: none">
+                            <p style="font-size: 14px;">Created a new group. You can share the code with whoever wants to join </p>
+                        </div>
+                        <div style="display: flex; justify-content: right; margin-top: 8px;">
+                            <button id="join-group-btn">Join group</button>
+                            <button id="create-group-btn">Create group</button>
+                        </div>
+                    </div>
+        
+                    <button class="focustug-control__startsession">Start Session</button>
                 </div>
-                <div class="focustug-control-section focustug-control-timer">
-                    <p class="focustug-control-section__header">Accountability Group</p>
-                   
-                    <select id="focustug-group-select" style="margin-top: 8px; width: 100%; background: rgba(255, 255, 255, 0.10); border: 0; padding: 16px; border-radius: 10px; color: white; font-size: 16px;">
-                        <option id="focustug-group-item">Flutterwave #199923</option>
-                    </select> 
+        
+        
+        
+        
+                <!--- when session is created-->
+                <div class="focustug-control__content" id="focustug-session-control" style="margin: 24px 0; display: none">
+                    <p style="padding-bottom: 16px; font-size: 16px; text-align:center;   white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;" > Session: ${session}</p>
+        
+                    <div style="display: grid; grid-template-columns: 30% 30% 30%; justify-content: space-between; ">
+                        <div style="display:flex; justify-content: center; flex-direction: column; align-items: center">
+                            <p style="color:#4ECB71">Total</p>
+                            <p id="focustug-sessiontime" style="color:#4ECB71"></p>
+                        </div>
+                        <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
+                            <p style="color: #A90F3D;">Distractions</p>
+                            <p id="focustug-distractiontime" style="color: #A90F3D;"></p>
+                        </div>
+                        <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
+                            <p style="color: orange;">Leaderboard</p>
+                            <p style="color: orange;"> 5th/10</p>
+                        </div>
+        
+                    </div>
+                    <button id="end-session-btn" class="focustug-control__endsession focustug-regular-button" style="margin-top: 24px;">End Session</button>
+                </div>
+        
+        
+        
+                <!-- when registration shit-->
+        
+                <div class="focustug-control__content" id="focustug-auth-container" style="padding: 24px 0;">
+        
+                    <div id='focustug-login-container'>
+        
+                        <div class="focustug-auth-header">
+                            Sign in to FocusTug and start blocking distractions while you work
+                        </div>
+                        <div class="focustug-form-control">
+                            <input type="text" placeholder="Email" id='focustug-login-email'>
+                        </div>
+                        <div class="focustug-form-control">
+                            <input type="password"
+                             placeholder="Password" id='focustug-login-password'>
+                        </div>
+                        
+                        <div class="focustug-form-already">
+                            <p>Don't have an account? <span id="focustug-signup-onboarding">Sign up</span></p>
+                        </div>
+                        <button class="focustug-regular-button" id="focustug-login-cta"> Login </button>
+        
+                    </div>
+        
+        
+                    <div style='display: none' id='focustug-signup-container'>
+        
+                        <div class="focustug-auth-header">
+                            Sign up
+                        </div>
+                        <div class="focustug-form-control">
+                            <input placeholder="Name" id="focustug-register-name">
+                        </div>
+                        <div class="focustug-form-control">
+                            <input placeholder="Email" id="focustug-register-email">
+                        </div>
+                        <div class="focustug-form-control">
+                            <input placeholder="Password" id="focustug-register-password">
+                        </div>
+                        <button class="focustug-regular-button" id="focustug-register-cta"> Sign Up </button>
+        
+                        <div class="focustug-form-already">
+                            <p>Already have an account <span id="focustug-login-onboarding">Sign in</span></p>
+                        </div>
+        
+                    </div>
+                </div>
             
-                    <div id="focustug-new-group-container" style="margin-top: 8px; display: none">
-                        <label for="" style="margin-bottom: 8px; display: block;">Group Name</label>
-                        <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
-                    </div>
-                    <div id="focustug-join-group-container" style="margin-top: 8px; display: none">
-                        <label for="" style="margin-bottom: 8px; display: block;">Group Code</label>
-                        <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
-                    </div> 
-                   
-                    <div style="margin-top: 2px; color: grey; display: none">
-                        <p style="font-size: 14px;">Created a new group. You can share the code with whoever wants to join </p>
-                    </div>
-                    <div style="display: flex; justify-content: right; margin-top: 8px;">
-                        <button id="join-group-btn">Join group</button>
-                        <button id="create-group-btn">Create group</button>
-                    </div>
-                </div>
-    
-                <button class="focustug-control__startsession">Start Session</button>
+            
+            
+            
+            
+            
+            
             </div>
-    
-    
-    
-    
-            <!--- when session is created-->
-            <div class="focustug-control__content" id="focustug-session-control" style="margin: 24px 0; display: none">
-                <p style="padding-bottom: 16px; font-size: 16px; text-align:center;   white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;" > Session: ${session}</p>
-    
-                <div style="display: grid; grid-template-columns: 30% 30% 30%; justify-content: space-between; ">
-                    <div style="display:flex; justify-content: center; flex-direction: column; align-items: center">
-                        <p style="color:#4ECB71">Total</p>
-                        <p id="focustug-sessiontime" style="color:#4ECB71"></p>
-                    </div>
-                    <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
-                        <p style="color: #A90F3D;">Distractions</p>
-                        <p id="focustug-distractiontime" style="color: #A90F3D;"></p>
-                    </div>
-                    <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
-                        <p style="color: orange;">Leaderboard</p>
-                        <p style="color: orange;"> 5th/10</p>
-                    </div>
-    
-                </div>
-                <button id="end-session-btn" class="focustug-control__endsession focustug-regular-button" style="margin-top: 24px;">End Session</button>
-            </div>
-    
-    
-    
-            <!-- when registration shit-->
-    
-            <div class="focustug-control__content" id="focustug-auth-container" style="padding: 24px 0;">
-    
-                <div id='focustug-login-container'>
-    
-                    <div class="focustug-auth-header">
-                        Sign in to FocusTug and start blocking distractions while you work
-                    </div>
-                    <div class="focustug-form-control">
-                        <input type="text" placeholder="Email" id='focustug-login-email'>
-                    </div>
-                    <div class="focustug-form-control">
-                        <input type="password"
-                         placeholder="Password" id='focustug-login-password'>
-                    </div>
-                    
-                    <div class="focustug-form-already">
-                        <p>Don't have an account? <span id="focustug-signup-onboarding">Sign up</span></p>
-                    </div>
-                    <button class="focustug-regular-button" id="focustug-login-cta"> Login </button>
-    
-                </div>
-    
-    
-                <div style='display: none' id='focustug-signup-container'>
-    
-                    <div class="focustug-auth-header">
-                        Sign up
-                    </div>
-                    <div class="focustug-form-control">
-                        <input placeholder="Name" id="focustug-register-name">
-                    </div>
-                    <div class="focustug-form-control">
-                        <input placeholder="Email" id="focustug-register-email">
-                    </div>
-                    <div class="focustug-form-control">
-                        <input placeholder="Password" id="focustug-register-password">
-                    </div>
-                    <button class="focustug-regular-button" id="focustug-register-cta"> Sign Up </button>
-    
-                    <div class="focustug-form-already">
-                        <p>Already have an account <span id="focustug-login-onboarding">Sign in</span></p>
-                    </div>
-    
-                </div>
-            </div>
+            
         
-        
-        
-        
-        
-        
-        
-        </div>
             
     
 
@@ -371,15 +391,37 @@
 
 <style>
 
+    .focustug-control__tabs {
+        display: grid;
+        grid-template-columns: 49% 49%;
+        justify-content: space-between;
+        padding: 20px 0;
+    }
 
+    
+
+    .focustug-control__tabs__tab {
+        display: flex;
+        justify-content: center;
+        padding: 8px;
+        cursor: pointer;
+    }
+    .focustug-control__tabs > .selected_tab {
+        border-bottom: 2px solid #4ECB71;
+    }
     .focustug-control__leaderboard  {
-        padding: 24px;
+        padding: 24px 0;
+    }
+
+    .focustug-control__leaderboard  p {
+        color: rgb(209, 209, 209);
     }
 
     .focustug-control__leaderboard > table {
         width: 100%;
 	border-collapse: collapse; 
 	margin:8px auto;
+    border-radius: 15px;
     }
 
     .focustug-control__leaderboard > th {
@@ -390,18 +432,42 @@
     }
 
     .focustug-control__leaderboard  tr {
-
+        background: rgba(255, 255, 255, 0.10);
+        padding: 8px !important;
+        color: white;
 	
 	
     }
 
+    td {
+        padding: 8px;
+        color: white;
+        font-size: 14px;
+        color: rgb(234, 234, 234);
+
+    }
+
     .table-header {
-        background: lightgrey;
+        padding: 8px !important;
+
+    }
+
+    .table-header > td {
+        
+        background-color: rgba(128, 128, 128, 0.255);
+    }
+
+    td > button {
+        background-color: transparent;
+        border: 0.5px grey solid;
+        color: white;
+        border-radius: 10px;
+        
     }
 
     .focustug-control__leaderboard  tr {
 	padding: 10px; 
-	border: 1px solid grey; 
+    background: rgba(255, 255, 255, 0.10);
 	text-align: left; 
 	font-size: 16px;
     color: grey;

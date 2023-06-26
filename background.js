@@ -9,7 +9,10 @@ const GLOBALS = {
     break_timer_seconds: 15,
 
     total_work_time: 0,
-    focus_percentage: 100
+    focus_percentage: 0,
+    
+    
+    distracting_hosts: {},
 }
 
 const INTERVALS = {
@@ -40,10 +43,14 @@ let SESSION = {
 
     total_work_time: 0,
     
-    break_time_left: 0
+    break_time_left: 0,
+    break_due_interval: null
 
 }
 
+chrome.tabs.onRemoved.addListener(async (tabiId, info)=> {
+    await stopTotalDistractionTimeCounter(tabId)
+})
 
 function initializeTotalDistractionTimeCounter(tabId) {
     try {
@@ -60,7 +67,29 @@ function initializeTotalDistractionTimeCounter(tabId) {
                     }
                 })
                 console.log(SESSION.total_distraction_time)
-                resolve()
+                console.log(GLOBALS.distracting_hosts)
+                
+
+                chrome.tabs.get(parseInt(tabId), async(t) => {
+                    const tab = t
+                    let host = new URL(tab.url).hostname;
+                    let splitt = host.split('www.');
+                    if (splitt && splitt.length > 1) {
+                        host = splitt[1]
+                    }
+        
+                    const distracting_host = GLOBALS.distracting_hosts[host]
+                    if (distracting_host) {
+                        distracting_host.time++;
+
+                        console.log('distracting hosts');
+
+                        console.log(GLOBALS.distracting_hosts)
+                    }
+
+                    resolve()   
+
+                })
     
             }, 1000)
         })
@@ -93,6 +122,9 @@ chrome.runtime.onInstalled.addListener(function(details){
     if(details.reason == "install"){
         //call a function to handle a first install
        // showControlPanel(false)
+
+       publishScores()
+      
     }else if(details.reason == "update"){
         //call a function to handle an update
        // showControlPanel(false)
@@ -265,6 +297,14 @@ function loadBodyExtractionScript(wait_till_load=false) {
    
 }
 
+function removePopUp() {
+    const popup = document.getElementsByClassName('foctugp-popup')[0];
+
+    if (popup) {
+        document.body.removeChild(popup)
+    }
+}
+ 
 function setupControl(session) {
     const focus_control_div = document.createElement('div');
 
@@ -280,296 +320,316 @@ function setupControl(session) {
     
         focus_control_div.innerHTML = `
         
-        <div class="focustug-control__container">
-        <div class="focustug-control__header">
-            <img src="./icon32.png" width="16" height="16" alt="">
-            FocusTug
-        </div>
-
-        <div class="focustug-control__leaderboard" style="display: none;">
-            <p> Accountability Group (Default)</p>
-            <table> 
-                <tr class="table-header">
-                    <td> User </td>
-                    <td> Focus % </td>
-                </tr>
-                <tr>
-                    <td> Deji</td>
-                    <td>50%</td>
-                </tr>
-                <tr>
-                    <td> Deji</td>
-                    <td>50%</td>
-                </tr>
-                <tr>
-                    <td> Deji</td>
-                    <td>50%</td>
-                </tr>
-                
-            </table>
-
-
-        </div>
-    
-        
-        <div id="break-time-alert" 
-        class="landing-container"
-            style=" 
-            padding: 16px; 
-            border-radius: 10px;
-            display: none;
-            
-            box-sizing: border-box;">
-        <div style=" box-sizing: border-box; padding: 16px; 
-            background: orange;  
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 10px;
-            width: 100%;" class="break-time-alert-container">
-            <div style="height: 100%;">
-
-                <p style="font-size: 18px; font-weight: 500; display: flex; align-items: center;">                                    
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
-                    </svg>
-                Break time is due!</p>
-
-                <p style="font-size: 15px;" id="break-time-due"></p>
-            </div>
-            <button id="start-break" style="background: transparent !important; 
-                                            margin-left: 21px;
-                                            border: 2px solid black !important;
-                                            color: black;"> 
-            Start break</button>
-        </div>
-    </div>
-    <div id="break-time-ongoing"
-    class="landing-container" style=" padding: 16px; 
-            box-sizing: border-box; display: none;">
-        <div style=" box-sizing: 
-            border-box; padding: 16px; 
-            border-radius: 10px;
-            background: orange;  
-            width: 100%; display: flex; justify-content: space-between; align-items: center;" class="break-time-alert-container">
-            
-
-            <div style="display: flex;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                  <div class="focustug-control__container">
+                <div class="focustug-control__header">
+                <svg width="20" height="20" style="margin-right: 8px" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 20C0 8.95431 8.95431 0 20 0H107.914C118.96 0 127.914 8.95431 127.914 20V108C127.914 119.046 118.96 128 107.914 128H63.9571H20C8.95431 128 0 119.046 0 108V20Z" fill="#4ECB71"/>
+                <path d="M87.1888 92.0064C93.7486 99.4696 99.8596 105.85 102.09 93.1442C104.32 80.4381 100.618 77.3755 91.6029 70.1161C82.5875 62.8567 73.2505 63.0486 73.2505 63.0486C71.7286 65.0858 80.6289 84.5432 87.1888 92.0064Z" fill="white"/>
+                <path d="M66.3447 95.5589C62.0469 103.022 58.0432 109.403 56.5821 96.6967C55.1209 83.9906 57.5461 80.9279 63.4527 73.6686C69.3593 66.4092 75.4766 66.6011 75.4766 66.6011C76.4737 68.6383 70.6425 88.0957 66.3447 95.5589Z" fill="white"/>
+                <path d="M62.7504 89.1592C66.367 72.0235 70.3847 74.145 72.331 68.9505" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M62.7504 89.1592C66.367 72.0235 70.3847 74.145 72.331 68.9505" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M52.6741 60.9107L0.088107 64.7112L0.0878906 70.7879L58.4753 66.7158L52.6741 60.9107ZM56.4233 60.6398L62.2333 66.4537L128 61.8668V55.4668L56.4233 60.6398Z" fill="white"/>
+                <path d="M76.9167 53.8243C79.2821 52.5088 81.9128 53.5823 82.7926 56.2219C83.6723 58.8616 82.468 62.0678 80.1025 63.3832L71.9248 67.931C69.5594 69.2464 66.9287 68.1729 66.0489 65.5333C65.1692 62.8936 66.3736 59.6874 68.739 58.372L76.9167 53.8243Z" fill="white"/>
+                <path d="M92.6752 85.6066C87.1552 68.4709 81.0227 70.5924 78.0521 65.3978" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M92.6752 85.6066C87.1552 68.4709 81.0227 70.5924 78.0521 65.3978" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
                 
-                <div>
-
-                    <p style="font-weight: 500; font-size: 18px;">Break ongoing</p>
-                    <p style="font-size: 13px;" id="break-time-left"></p>
+                    FocusTug
                 </div>
-            </div>
-            <button id="end-break" style="background: transparent !important; 
-                    border: 2px solid black !important;
-                    font-weight: 500 !important;
-                    color: black;"> End</button>
-        </div>
-    </div>
 
-    
-
-
-        <div id="focustug-loading" class="lds-container" style="display: none; justify-content: center;">
-            <div class="lds-hourglass"></div>
-        </div>
-
-        <div class="focustug-control__content" id='focustug-main-control'>
-            <div class="focustug-control-section focustug-control-taskarea">
-                <p class="focustug-control-section__header">Start a new task</p>
-                <textarea id="focustug-task-textarea" placeholder="Enter description of your task" style="margin-top: 8px"></textarea>
-            </div>
-            <div class="focustug-control-section focustug-control-taskarea">
-                <p class="focustug-control-section__header">Intensity</p>
-
-                <div style="display: grid; grid-template-columns: 48% 48%; justify-content: space-between">
-                    <div class="focustug-control-section__intensity focustug-intensity-chosen" id="intensity-hard">
-                        <p class="focustug-control-section__intensity__header">Very Intense</p>
-                        <p class="focustug-control-section__intensity__desc">Block every distraction</p>
+                <div class="focustug-control__tabs">
+                    <div class="focustug-control__tabs__tab selected_tab" id="focustug-session-tab">
+                        Session
                     </div>
-                    <div class="focustug-control-section__intensity" id="intensity-mild">
-                        <p class="focustug-control-section__intensity__header">Mild</p>
-                        <p class="focustug-control-section__intensity__desc">Show a simple focus bar</p>
+                    <div class="focustug-control__tabs__tab" " id="focustug-insight-tab">
+                        Insights
                     </div>
                 </div>
-                
-            </div>
-
-            <div class="focustug-control-section focustug-control-timer">
-                <p class="focustug-control-section__header">Timer</p>
-                <div class="focustug-control-timer__container">
-
-
-                    <div style="display: flex; height: fit-content !important">
-
-                        <div>
+        
+                <div class="focustug-control__leaderboard" style="display: none">
+                    <p> Accountability Group</p>
+                    <table id="accountability-leaderboard"> 
+                        <tr class="table-header">
+                            <td> User </td>
+                            <td> Productivy (%) </td>
+                        </tr>
                         
-                            <p id="work-time-display">1 hour</p>
-                            <p>Work</p>
-                        </div>
-                        <div>
-                            <button style=" background:  rgba(0, 0, 0, 0.299);;  margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='work-time-increase' class='timer-control'> 
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
-                                </svg>
-                                    
-
-                            </button>
-                            <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='work-time-decrease' class='timer-control'> 
-                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
-                                </svg>
-                                    
-                            </button>
-                        </div>
-                    </div>
-                    <div style="display: flex; height: fit-content !important;">
-                        <div>
-                            <p id="break-time-display">15 minutes</p>
-                            <p>Break</p>
-                        </div>
-
-                        <div>
-                        <button style="background: rgba(0, 0, 0, 0.299); margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='break-time-increase' class='timer-control'> 
-                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
-                            </svg>
-
-                        </button>
-                        <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='break-time-decrease' class='timer-control'> 
-                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
-                            </svg>
-                        </button>
-                    </div>
-                    </div>
-                </div>
-            </div>
-            <div class="focustug-control-section focustug-control-timer">
-                <p class="focustug-control-section__header">Accountability Group</p>
-               
-                <select id="focustug-group-select" style="margin-top: 8px; width: 100%; background: rgba(255, 255, 255, 0.10); border: 0; padding: 16px; border-radius: 10px; color: white; font-size: 16px;">
-                    <option id="focustug-group-item">Flutterwave #199923</option>
-                </select> 
+                    </table>
+                    <p style="color :grey;  text-align: center; display: block; margin: 16px 0; font-size: 12px;"> </p>
         
-                <div id="focustug-new-group-container" style="margin-top: 8px; display: none">
-                    <label for="" style="margin-bottom: 8px; display: block;">Group Name</label>
-                    <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
+        
                 </div>
-                <div id="focustug-join-group-container" style="margin-top: 8px; display: none">
-                    <label for="" style="margin-bottom: 8px; display: block;">Group Code</label>
-                    <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
-                </div> 
-               
-                <div style="margin-top: 2px; color: grey; display: none">
-                    <p style="font-size: 14px;">Created a new group. You can share the code with whoever wants to join </p>
-                </div>
-                <div style="display: flex; justify-content: right; margin-top: 8px;">
-                    <button id="join-group-btn">Join group</button>
-                    <button id="create-group-btn">Create group</button>
-                </div>
-            </div>
-
-            <button class="focustug-control__startsession">Start Session</button>
-        </div>
-
-
-
-
-        <!--- when session is created-->
-        <div class="focustug-control__content" id="focustug-session-control" style="margin: 24px 0; display: none">
-            <p style="padding-bottom: 16px; font-size: 16px; text-align:center;   white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;" > Session: ${session}</p>
-
-            <div style="display: grid; grid-template-columns: 30% 30% 30%; justify-content: space-between; ">
-                <div style="display:flex; justify-content: center; flex-direction: column; align-items: center">
-                    <p style="color:#4ECB71">Total</p>
-                    <p id="focustug-sessiontime" style="color:#4ECB71"></p>
-                </div>
-                <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
-                    <p style="color: #A90F3D;">Distractions</p>
-                    <p id="focustug-distractiontime" style="color: #A90F3D;"></p>
-                </div>
-                <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
-                    <p style="color: orange;">Leaderboard</p>
-                    <p style="color: orange;"> 5th/10</p>
-                </div>
-
-            </div>
-            <button id="end-session-btn" class="focustug-control__endsession focustug-regular-button" style="margin-top: 24px;">End Session</button>
-        </div>
-
-
-
-        <!-- when registration shit-->
-
-        <div class="focustug-control__content" id="focustug-auth-container" style="padding: 24px 0;">
-
-            <div id='focustug-login-container'>
-
-                <div class="focustug-auth-header">
-                    Sign in to FocusTug and start blocking distractions while you work
-                </div>
-                <div class="focustug-form-control">
-                    <input type="text" placeholder="Email" id='focustug-login-email'>
-                </div>
-                <div class="focustug-form-control">
-                    <input type="password"
-                     placeholder="Password" id='focustug-login-password'>
+            
+        
+                <div class="focustug-control__leaderboard" style="display:none">
+                    <p> Distractions today</p>
+                    <table id="distractions-table"> 
+                        <tr class="table-header">
+                            <td> Site </td>
+                            <td> Time spent</td>
+                            <td>Actions</td>
+                        </tr>
+                        
+                       
+                    
+                        
+                    </table>
+                    <p style="color :grey;  text-align: center; display: block; margin: 16px 0; font-size: 12px;"> </p>
+        
+        
                 </div>
                 
-                <div class="focustug-form-already">
-                    <p>Don't have an account? <span id="focustug-signup-onboarding">Sign up</span></p>
-                </div>
-                <button class="focustug-regular-button" id="focustug-login-cta"> Login </button>
-
-            </div>
-
-
-            <div style='display: none' id='focustug-signup-container'>
-
-                <div class="focustug-auth-header">
-                    Sign up
-                </div>
-                <div class="focustug-form-control">
-                    <input placeholder="Name" id="focustug-register-name">
-                </div>
-                <div class="focustug-form-control">
-                    <input placeholder="Email" id="focustug-register-email">
-                </div>
-                <div class="focustug-form-control">
-                    <input placeholder="Password" id="focustug-register-password">
-                </div>
-                <button class="focustug-regular-button" id="focustug-register-cta"> Sign Up </button>
-
-                <div class="focustug-form-already">
-                    <p>Already have an account <span id="focustug-login-onboarding">Sign in</span></p>
-                </div>
-
-            </div>
-        </div>
-    
-    
-    
-    
-    
-    
-    
-    </div>
+                <div id="break-time-alert" 
+                class="landing-container"
+                    style=" 
+                    padding: 16px; 
+                    border-radius: 10px;
+                    display: none;
+                    
+                    box-sizing: border-box;">
+                <div style=" box-sizing: border-box; padding: 16px; 
+                    background: orange;  
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-radius: 10px;
+                    width: 100%;" class="break-time-alert-container">
+                    <div style="height: 100%;">
         
-    
+                        <p style="font-size: 18px; font-weight: 500; display: flex; align-items: center;">                                    
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                            </svg>
+                        Break time is due!</p>
+        
+                        <p style="font-size: 15px;" id="break-time-due"></p>
+                    </div>
+                    <button id="start-break" style="background: transparent !important; 
+                                                    margin-left: 21px;
+                                                    border: 2px solid black !important;
+                                                    color: black;"> 
+                    Start break</button>
+                </div>
+            </div>
+            <div id="break-time-ongoing"
+            class="landing-container" style=" padding: 16px; 
+                    box-sizing: border-box; display: none;">
+                <div style=" box-sizing: 
+                    border-box; padding: 16px; 
+                    border-radius: 10px;
+                    background: orange;  
+                    width: 100%; display: flex; justify-content: space-between; align-items: center;" class="break-time-alert-container">
+                    
+        
+                    <div style="display: flex;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 17V7C13 6.45 13.196 5.979 13.588 5.587C13.98 5.195 14.4507 4.99933 15 5H17C17.55 5 18.021 5.196 18.413 5.588C18.805 5.98 19.0007 6.45067 19 7V17C19 17.55 18.804 18.021 18.412 18.413C18.02 18.805 17.5493 19.0007 17 19H15C14.45 19 13.979 18.804 13.587 18.412C13.195 18.02 12.9993 17.5493 13 17ZM5 17V7C5 6.45 5.196 5.979 5.588 5.587C5.98 5.195 6.45067 4.99933 7 5H9C9.55 5 10.021 5.196 10.413 5.588C10.805 5.98 11.0007 6.45067 11 7V17C11 17.55 10.804 18.021 10.412 18.413C10.02 18.805 9.54934 19.0007 9 19H7C6.45 19 5.979 18.804 5.587 18.412C5.195 18.02 4.99934 17.5493 5 17ZM15 17H17V7H15V17ZM7 17H9V7H7V17Z" fill="black"/>
+                        </svg>
+                        
+                        <div>
+        
+                            <p style="font-weight: 500; font-size: 18px;">Break ongoing</p>
+                            <p style="font-size: 13px;" id="break-time-left"></p>
+                        </div>
+                    </div>
+                    <button id="end-break" style="background: transparent !important; 
+                            border: 2px solid black !important;
+                            font-weight: 500 !important;
+                            color: black;"> End</button>
+                </div>
+            </div>
+        
+            
+        
+        
+                <div id="focustug-loading" class="lds-container" style="display: none; justify-content: center;">
+                    <div class="lds-hourglass"></div>
+                </div>
+        
+                <div class="focustug-control__content" id='focustug-main-control'>
+                    <div class="focustug-control-section focustug-control-taskarea">
+                        <p class="focustug-control-section__header">Start a new task</p>
+                        <textarea id="focustug-task-textarea" placeholder="Enter description of your task" style="margin-top: 8px"></textarea>
+                    </div>
+                    <div class="focustug-control-section focustug-control-taskarea">
+                        <p class="focustug-control-section__header">Intensity</p>
+        
+                        <div style="display: grid; grid-template-columns: 48% 48%; justify-content: space-between">
+                            <div class="focustug-control-section__intensity focustug-intensity-chosen" id="intensity-hard">
+                                <p class="focustug-control-section__intensity__header">Very Intense</p>
+                                <p class="focustug-control-section__intensity__desc">Block every distraction</p>
+                            </div>
+                            <div class="focustug-control-section__intensity" id="intensity-mild">
+                                <p class="focustug-control-section__intensity__header">Mild</p>
+                                <p class="focustug-control-section__intensity__desc">Show a simple focus bar</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+        
+                    <div class="focustug-control-section focustug-control-timer">
+                        <p class="focustug-control-section__header">Timer</p>
+                        <div class="focustug-control-timer__container">
+        
+        
+                            <div style="display: flex; height: fit-content !important">
+        
+                                <div>
+                                
+                                    <p id="work-time-display">1 hour</p>
+                                    <p>Work</p>
+                                </div>
+                                <div>
+                                    <button style=" background:  rgba(0, 0, 0, 0.299);;  margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='work-time-increase' class='timer-control'> 
+                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
+                                        </svg>
+                                            
+        
+                                    </button>
+                                    <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='work-time-decrease' class='timer-control'> 
+                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
+                                        </svg>
+                                            
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="display: flex; height: fit-content !important;">
+                                <div>
+                                    <p id="break-time-display">15 minutes</p>
+                                    <p>Break</p>
+                                </div>
+        
+                                <div>
+                                <button style="background: rgba(0, 0, 0, 0.299); margin-bottom: 10px; border:0; display: flex; justify-content:center;" id='break-time-increase' class='timer-control'> 
+                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1 10L7.5 3L14 10" stroke="white" stroke-linecap="square"/>
+                                    </svg>
+        
+                                </button>
+                                <button style="background:  rgba(0, 0, 0, 0.299);; border:0; display: flex; justify-content:center;" id='break-time-decrease' class='timer-control'> 
+                                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14 5L7.5 12L1 5" stroke="white" stroke-linecap="square"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="focustug-control-section focustug-control-timer">
+                        <p class="focustug-control-section__header">Accountability Group</p>
+                       
+                        <select id="focustug-group-select" style="margin-top: 8px; width: 100%; background: rgba(255, 255, 255, 0.10); border: 0; padding: 16px; border-radius: 10px; color: white; font-size: 16px;">
+                           <!--- <option id="focustug-group-item">Flutterwave #199923</option>--->
+                        </select> 
+                
+                        <div id="focustug-new-group-container" style="margin-top: 8px; display: none">
+                            <label for="" style="margin-bottom: 8px; display: block;">Group Name</label>
+                            <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
+                        </div>
+                        <div id="focustug-join-group-container" style="margin-top: 8px; display: none">
+                            <label for="" style="margin-bottom: 8px; display: block;">Group Code</label>
+                            <input style="width: 100%; padding: 16px; background:rgba(255, 255, 255, 0.10); border: 0; border-radius: 10px;"/>
+                        </div> 
+                       
+                        <div style="margin-top: 2px; color: grey; display: none">
+                            <p style="font-size: 14px;">Created a new group. You can share the code with whoever wants to join </p>
+                        </div>
+                       
+                    </div>
+        
+                    <button class="focustug-control__startsession">Start Session</button>
+                </div>
+        
+        
+        
+        
+                <!--- when session is created-->
+                <div class="focustug-control__content" id="focustug-session-control" style="margin: 24px 0; display: none">
+                    <p style="padding-bottom: 16px; font-size: 16px; text-align:center;   white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;" > Session: ${session}</p>
+        
+                    <div style="display: grid; grid-template-columns: 30% 30% 30%; justify-content: space-between; ">
+                        <div style="display:flex; justify-content: center; flex-direction: column; align-items: center">
+                            <p style="color:#4ECB71">Total</p>
+                            <p id="focustug-sessiontime" style="color:#4ECB71"></p>
+                        </div>
+                        <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
+                            <p style="color: #A90F3D;">Distractions</p>
+                            <p id="focustug-distractiontime" style="color: #A90F3D;"></p>
+                        </div>
+                        <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
+                            <p style="color: orange;">Leaderboard</p>
+                            <p style="color: orange;"> 5th/10</p>
+                        </div>
+        
+                    </div>
+                    <button id="end-session-btn" class="focustug-control__endsession focustug-regular-button" style="margin-top: 24px;">End Session</button>
+                </div>
+        
+        
+        
+                <!-- when registration shit-->
+        
+                <div class="focustug-control__content" id="focustug-auth-container" style="padding: 24px 0;">
+        
+                    <div id='focustug-login-container'>
+        
+                        <div class="focustug-auth-header">
+                            Sign in to FocusTug and start blocking distractions while you work
+                        </div>
+                        <div class="focustug-form-control">
+                            <input type="text" placeholder="Email" id='focustug-login-email'>
+                        </div>
+                        <div class="focustug-form-control">
+                            <input type="password"
+                             placeholder="Password" id='focustug-login-password'>
+                        </div>
+                        
+                        <div class="focustug-form-already">
+                            <p>Don't have an account? <span id="focustug-signup-onboarding">Sign up</span></p>
+                        </div>
+                        <button class="focustug-regular-button" id="focustug-login-cta"> Login </button>
+        
+                    </div>
+        
+        
+                    <div style='display: none' id='focustug-signup-container'>
+        
+                        <div class="focustug-auth-header">
+                            Sign up
+                        </div>
+                        <div class="focustug-form-control">
+                            <input placeholder="Name" id="focustug-register-name">
+                        </div>
+                        <div class="focustug-form-control">
+                            <input placeholder="Email" id="focustug-register-email">
+                        </div>
+                        <div class="focustug-form-control">
+                            <input placeholder="Password" id="focustug-register-password">
+                        </div>
+                        <button class="focustug-regular-button" id="focustug-register-cta"> Sign Up </button>
+        
+                        <div class="focustug-form-already">
+                            <p>Already have an account <span id="focustug-login-onboarding">Sign in</span></p>
+                        </div>
+        
+                    </div>
+                </div>
+            
+            
+            
+            
+            
+            
+            
+            </div>
 
 
         `
         
-        
-    
         document.body.append(focus_control_div)
     }
     else {
@@ -580,10 +640,132 @@ function setupControl(session) {
 
 }
 
+function handleBreakDue() { 
+
+    SESSION.break_is_due = false;
+    clearInterval(GLOBALS.break_due_interval)
+    GLOBALS.break_due_interval = null
+
+    chrome.tabs.query({
+        active: true
+    }).then(tabs => {
+        let tab_id = null;
+        for (tab of tabs) {
+            if (tab.id) {
+
+                tab_id = tab.id
+            }
+        }
+        console.log("handleBreakDue:  tab_id : " + tab_id)
+
+        chrome.scripting.executeScript({
+            target: {
+                tabId: parseInt(tab_id)
+            },
+            //files : [ "parn.js"],
+            func: showBreakAlert,
+
+        }).then((e) => {
+            console.log('distraction watch')
+        }).catch(e => {
+            throw e
+        })
+    })
+
+
+}
+
+
+function showBreakAlert() {
+    const modal_div = document.createElement('div');
+    modal_div.classList.add('blocker-modal');
+    modal_div.classList.add('blocker-modal-red');
+    modal_div.style.height = '100%';
+    modal_div.style.width = '100%';
+    modal_div.style.position = 'fixed';
+
+
+    document.body.prepend(modal_div)
+
+
+
+    modal_div.innerHTML += `
+        <div class="blocker-modal">
+            <div class="blocker-modal-container">
+                <div class="blocker-modal-logo" style="display: flex; align-items: center;">
+                    <svg width="20" height="20" viewBox="0 0 49 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0 10C0 4.47715 4.47715 0 10 0H37.9677C43.4905 0 47.9677 4.47715 47.9677 10V38C47.9677 43.5229 43.4905 48 37.9677 48H23.9838H10C4.47716 48 0 43.5229 0 38V10Z" fill="#4ECB71"/>
+                        <path d="M32.6928 34.5024C35.1528 37.3011 37.4444 39.6939 38.2807 34.9291C39.117 30.1643 37.7289 29.0158 34.3481 26.2936C33.187 25.3586 32.0116 24.7532 30.9687 24.3613C28.7563 23.53 27.5428 25.2327 28.6962 27.7765C29.7827 30.1728 31.3655 32.9923 32.6928 34.5024Z" fill="white"/>
+                        <path d="M34.7537 32.1024C32.6837 25.6766 30.3841 26.4721 29.2701 24.5241" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M34.7537 32.1024C32.6837 25.6766 30.3841 26.4721 29.2701 24.5241" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M24.8784 35.8346C23.2667 38.6333 21.7653 41.026 21.2174 36.2612C20.6695 31.4965 21.5789 30.348 23.7939 27.6257C24.4684 26.7967 25.1502 26.2268 25.7724 25.8351C27.3952 24.8135 28.2536 26.6265 27.3995 29.4323C26.6926 31.7543 25.7091 34.392 24.8784 35.8346Z" fill="white"/>
+                        <path d="M23.5325 33.4347C24.8887 27.0088 26.3954 27.8044 27.1252 25.8564" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M23.5325 33.4347C24.8887 27.0088 26.3954 27.8044 27.1252 25.8564" stroke="#F4F4F4" stroke-width="1.5" stroke-linecap="round"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M19.7549 22.8415L0.0352374 24.2667L0.0351562 26.5455L21.9304 25.0184L19.7549 22.8415ZM21.1609 22.7399L23.3396 24.9201L48.0022 23.2V20.8L21.1609 22.7399Z" fill="white"/>
+                        <path d="M28.839 20.1841C29.726 19.6908 30.7126 20.0934 31.0425 21.0832Lnan nanL31.0425 21.0832C31.3724 22.0731 30.9207 23.2754 30.0337 23.7687L26.967 25.4741C26.08 25.9674 25.0935 25.5648 24.7636 24.575Lnan nanL24.7636 24.575C24.4337 23.5851 24.8853 22.3828 25.7724 21.8895L28.839 20.1841Z" fill="white"/>
+                        </svg>
+
+                        <p style="margin-left: 8px; color: white; font-size: 20px;">FocusTug</p>
+                        
+                </div>
+
+                <div>
+                    <div style="width: 200px; height: 200px; margin: auto; display: flex; justify-content: center;"  id="blocker-illustration">
+
+                        <img style="width: 100%; height: 100%; object-fit: contain" src="https://i.ibb.co/PY6CNJN/celebrate.png" alt="">
+                    </div>
+                    <div  id="blocker-close-message" style="color:white;" class="blocker-header-message">
+                        It's break time!!!
+
+                    </div>
+
+
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 64px; width: 60%; margin: auto; margin-top: 16px;;">
+                        <div style="display: flex">
+                        <button id="focustug-suspend-break" style="margin-bottom: 24px; margin-right: 16px; border:0; color: black !important" class="blocker-close-cta"> Suspend to break time</button>
+                        <button id="focustug-start-break" style="margin-bottom: 24px; margin-right: 16px; border: 0; color: black !important" class="blocker-close-cta"> Start break time</button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="blocker-bottom"> 
+                        <!--<button>Ignore once</button>--->
+                </div>
+            </div>
+        </div>
+        `
+
+        const suspend_btn = document.getElementById('focustug-suspend-break');
+        const start_btn = document.getElementById('focustug-start-break');
+
+        suspend_btn.addEventListener('click', function(e){
+            modal_div.style.display = 'none';
+            
+        })
+        
+        start_btn.addEventListener('click', function(e){
+            //document.getElementsByClassName("blocker-modal").style.display = 'none';
+            chrome.runtime.sendMessage({message: 'start-break'}, function(response) {
+                if (response) {
+                    modal_div.style.display = 'none';
+                }
+            })
+            
+        })
+}
+
+
+
 function startBreak() {
     console.log('start break background')
     SESSION.break_time_ongoing = true;
-    SESSION.break_is_due = false;
+
+
 
     // duration 
     let duration_in_min = SESSION.break_timer;
@@ -618,19 +800,56 @@ function endBreak() {
     SESSION.break_time_ongoing = false;
 
     clearInterval(INTERVALS.break_timer_interval)
+    //initializeBreakTime()
     //()
     try {
-
-        GLOBALS.work_timer_interval = setInterval(() => {
-            SESSION.total_work_time++;
-
-        }, 1000)
+        startWorkTimer()
     } catch (e) {
 
     }
 
 
 }
+
+function publishScores() {
+    GLOBALS['publish_scores_interval'] = setInterval(() => {
+
+        chrome.storage.sync.get(null, async (settings) => {
+            const userToken = settings  && settings.auth && settings.auth.USER_TOKEN
+            try {   
+    
+                /*
+    
+                await sendRequest("https://leapstartlabapi.herokuapp.com/api/v1/groups/members", "POST", {}, {"Authorization":   `Bearer ${userToken}`}).then(resp=> {
+                    console.log('result')
+                    console.log(resp)
+                }).catch(e=> {
+                    throw e
+                })*/
+    
+                const result =  await fetch("https://leapstartlabapi.herokuapp.com/api/v1/groups/scores", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${userToken}`,
+                        "Content-Type": 'application/json'
+                    },
+                    body: JSON.stringify({percentage: GLOBALS.focus_percentage})
+                }).then(resp => {
+                    
+    
+                    return resp.json()
+                })
+            }catch(e) {
+    
+            }
+        })
+    }, 30000)
+
+
+}
+
+
+
 
  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.message === 'get-active-session') {
@@ -666,7 +885,13 @@ function endBreak() {
             evaluatedHosts: {
         
             },
+
         }
+        Object.keys(INTERVALS).forEach(key=> {
+            clearInterval(key)
+        })
+
+        // remov
         sendResponse(true)
     }
 
@@ -679,6 +904,19 @@ function endBreak() {
             total: SESSION.total_work_time,
             distraction: SESSION.total_distraction_time
         })
+    }
+
+    if (message.message === 'get-session-details') {
+        sendResponse(SESSION)
+    }
+
+    if (message.message === 'start-break') {
+        startBreak()
+        sendResponse(true)
+    }
+
+    if (message.message  === 'get-distracting-hosts') {
+        sendResponse(GLOBALS.distracting_hosts)
     }
 })
 
@@ -766,17 +1004,17 @@ function setUpPopup() {
     
                 <div class="foctug-popup__lead">
                     <div class="foctug-popup__lead__container">
-                            <div class="draggable">
+                            <!--<div class="draggable">
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M12 12H16V16H12V12ZM6 12H10V16H6V12ZM0 12H4V16H0V12ZM12 6H16V10H12V6ZM6 6H10V10H6V6ZM0 6H4V10H0V6ZM12 0H16V4H12V0ZM6 0H10V4H6V0ZM0 0H4V4H0V0Z" fill="#4ECB71"/>
                                     </svg>
                                     
-                            </div>
-                            <div class="foctug-popup__lead__bar">
+                            </div>--->
+                            <div class="foctug-popup__lead__bar" style="border-radius: 5px !important">
                                 <div class="foctug-popup__lead__bar__percentage" id="foctug-popup__lead__bar__percentage">
 
                                 </div>
-                                <div class="foctug-popup__lead__bar__focusbar" id="foctug-popup__lead__bar__focusbar">
+                                <div class="foctug-popup__lead__bar__focusbar"  style="border-radius: 5px !important" id="foctug-popup__lead__bar__focusbar">
     
                                 </div>
                             </div>
@@ -808,15 +1046,208 @@ function setUpPopup() {
                 }
             }
         })
-    },5000)
+    },1000)
 
 }
 
 
 async function loadControlScript() {
+
+
+
+
+    const getLoginCreds = () => new Promise((resolve, reject) => {
+        chrome.storage.sync.get(null, (settings) => {
+            const token = settings && settings.auth && settings.auth.USER_TOKEN;
+            resolve(token)
+        })
+    })
+    
+
+    
+    const creds = await getLoginCreds();
+    
+    if (creds) {
+        document.getElementById('focustug-main-control').style.display = 'block';
+        document.getElementById('focustug-auth-container').style.display = 'none';
+
+        for (let el of document.getElementsByClassName("focustug-control__tabs__tab")) {
+            el.style.display = 'flex'
+        }
+
+    }
+    else {
+        document.getElementById('focustug-auth-container').style.display = 'block'
+        document.getElementById('focustug-main-control').style.display = 'none'
+
+        for (let el of document.getElementsByClassName("focustug-control__tabs__tab")) {
+            el.style.display = 'none'
+        }
+
+
+    }
+
+
+    const tabs = document.getElementsByClassName("focustug-control__tabs__tab");
+    for (let i = 0; i < tabs.length; i++) {
+         const tab = tabs[i];
+         tab.addEventListener("click", function(e) {
+             if (e.currentTarget.id ==='focustug-insight-tab') {
+                 e.currentTarget.classList.add("selected_tab");
+    
+    
+                 document.getElementById('focustug-main-control').style.display = 'none'
+                 document.getElementById('focustug-session-tab').classList.remove('selected_tab')
+                 for(let el of document.getElementsByClassName("focustug-control__leaderboard")) {
+                    el.style.display = 'block'
+                 }
+             }
+             else {
+                document.getElementById('focustug-main-control').style.display = 'block'
+    
+                 document.getElementById('focustug-session-tab').classList.add('selected_tab')
+                 document.getElementById('focustug-insight-tab').classList.remove('selected_tab')
+                 for(let el of document.getElementsByClassName("focustug-control__leaderboard")) {
+                    el.style.display = 'none'
+                 }
+    
+             }
+             
+             
+         })
+    
+         
+    }
+    
+    async function sendRequest(url, method, body, headers = {}) {
+        try {   
+
+    
+            return await fetch(url, {
+                method,
+                body: JSON.stringify(body),
+                headers: {
+                    ...headers,
+                    "Content-Type": 'application/json'
+                }
+            }).then(resp => {
+                return resp.json()
+            })
+        } catch (e) {}
+    }
+
     
     try { 
 
+        /*****
+         * 
+         * 
+         * 
+         * 
+         * 
+         * accountabilityy group members
+         */
+        chrome.storage.sync.get(null, async (settings) => {
+            console.log('trying to get members')
+            const userToken = settings  && settings.auth && settings.auth.USER_TOKEN
+            console.log('token')
+            try {   
+
+                /*
+
+                await sendRequest("https://leapstartlabapi.herokuapp.com/api/v1/groups/members", "POST", {}, {"Authorization":   `Bearer ${userToken}`}).then(resp=> {
+                    console.log('result')
+                    console.log(resp)
+                }).catch(e=> {
+                    throw e
+                })*/
+
+                const result =  await fetch("https://leapstartlabapi.herokuapp.com/api/v1/groups/members", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${userToken}`,
+                        "Content-Type": 'application/json'
+                    }
+                }).then(resp => {
+                    
+
+                    return resp.json()
+                })
+
+                if (result && result.data) {
+                    result.data.forEach(member=> {
+                        document.getElementById('accountability-leaderboard').innerHTML +=
+
+                        `
+                            <tr>
+                            <td>${member.user.name}</td>
+                            <td>${member.user.producitivity_scores && member.user.producitivity_scores[0]?.percentage || 0}%</td>
+                        </tr>
+                        `
+                    })
+                }
+            }catch(e) {
+                throw e
+            }
+        })
+        
+        // get distracting sites
+        chrome.runtime.sendMessage({message: 'get-distracting-hosts'}, function(response) {
+            // distracting table
+            console.log('get distracting sites')
+            console.log('response')
+
+
+
+
+            console.log(response)
+            for (let i = 0; i < Object.keys(response).length; i++) {
+
+                const site = Object.keys(response)[i];
+                document.getElementById('distractions-table').innerHTML += `
+                    <tr>
+                        <td>${site}</td>
+                        <td>${response[Object.keys(response)[i]].time}</td>
+                        <td><button style="display: flex; align-items: center; padding: 8px; "> <svg style="margin-right: 5px;" width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM2 10C2 5.58 5.58 2 10 2C11.85 2 13.55 2.63 14.9 3.69L3.69 14.9C2.59177 13.5031 1.99639 11.7769 2 10ZM10 18C8.15 18 6.45 17.37 5.1 16.31L16.31 5.1C17.4082 6.49686 18.0036 8.22311 18 10C18 14.42 14.42 18 10 18Z" fill="#E02A2A"/>
+                            </svg>
+                            Hard lock</button></td>
+                    </tr>
+                `
+            }
+
+        })
+
+
+        /**
+         * 
+         * 
+         * Break time shit
+         */
+
+
+        setInterval(() =>{
+            console.log('getting shit')
+            chrome.runtime.sendMessage({message: 'get-session-details'}, function(response) {
+                const session = response;
+                if (session.break_time_ongoing) {
+                    document.getElementById("break-time-ongoing").style.display = 'block'
+    
+                }
+                else {
+                    if ( document.getElementById("break-time-ongoing").style.display === 'block') {
+    
+                        document.getElementById("break-time-ongoing").style.display = 'none'
+                    }
+    
+                }
+    
+                if (session.break_is_due) {
+                    document.getElementById("break-time-alert").style.display = 'block'
+                }
+            })
+    
+        }, 5000)
 
 
 
@@ -828,28 +1259,27 @@ async function loadControlScript() {
          * group stuff
          */
 
-        
+        console.log('get settings')
 
         chrome.storage.sync.get(null, async(settings) => {
+            console.log('settings')
+            console.log(settings)
             if (settings.GROUPS && settings.GROUPS.length) {
-                settings.GROUP.forEach(group=>{
+                console.log('grops')
+                console.log(settings.GROUPS)
+                for (let i = 0; i < settings.GROUPS.length; i++) {
+                    const group = settings.GROUPS[i];
                     document.getElementById("focustug-group-select").innerHTML += `
-                        <option id="focustug-group-item"> ${group}</option>
-                    `
-                })
+                    <option id="focustug-group-item"> ${group.name}</option>
+                `
+                }
+                
             } 
         })
 
-        let join_group_btn = document.getElementById('join-group-btn');
-        join_group_btn.addEventListener('click', (e) => {
-            document.getElementById('focustug-join-group-container').style.display = 'block'
-        })
+        
 
-        let create_group_btn = document.getElementById('create-group-btn');
-        create_group_btn.addEventListener('click', (e) => {
-            document.getElementById('focustug-create-group-container').style.display = 'block'
-        }) 
-
+      
 
 
         
@@ -883,33 +1313,10 @@ async function loadControlScript() {
 
         
 
-        const getLoginCreds = () => new Promise((resolve, reject) => {
-            chrome.storage.sync.get(null, (settings) => {
-                const token = settings && settings.auth && settings.auth.USER_TOKEN;
-                resolve(token)
-            })
-        })
-        
-   
-        
-        const creds = await getLoginCreds();
-        console.log('creds')
-        console.log(creds)
-        
-        if (creds) {
-            document.getElementById('focustug-main-control').style.display = 'block';
-            document.getElementById('focustug-auth-container').style.display = 'none';
-
-        }
-        else {
-            document.getElementById('focustug-auth-container').style.display = 'block'
-            document.getElementById('focustug-auth-container').style.display = 'none'
-
-        }
 
         const getSession = () =>  new Promise((resolve, reject)=>{
             chrome.runtime.sendMessage({message: 'get-active-session'}, function(response) {
-               resolve(response)
+               return resolve(response)
             })
        })
 
@@ -918,26 +1325,18 @@ async function loadControlScript() {
        if (session) {
         document.getElementById('focustug-main-control').style.display = 'none'
         document.getElementById('focustug-session-control').style.display = 'block'
+        document.getElementById('focustug-insight-tab').style.display = 'none'
+        document.getElementById('focustug-session-tab').style.display = 'none'
+        for (let i = 0; i < document.getElementsByClassName('focustug-control__leaderboard').length; i++) {
+            const item = document.getElementsByClassName('focustug-control__leaderboard')[i];
+
+            item.style.display = 'none'
+        }
+
        }
 
 
         
-
-        async function sendRequest(url, method, body, headers = {}) {
-            try {
-        
-                return await fetch(url, {
-                    method,
-                    body: JSON.stringify(body),
-                    headers: {
-                        ...headers,
-                        "Content-Type": 'application/json'
-                    }
-                }).then(resp => {
-                    return resp.json()
-                })
-            } catch (e) {}
-        }
 
         async function register(params) {
             const loading = document.getElementById('focustug-loading');
@@ -945,15 +1344,33 @@ async function loadControlScript() {
             if (loading) loading.style.display = 'block'
 
 
-                await sendRequest('http://localhost:5000/api/v1/auth/register', "POST", {
+                await sendRequest('https://leapstartlabapi.herokuapp.com/api/v1/auth/register', "POST", {
                         email: params.register_email,
                         password: params.register_password,
                         name: params.register_name
                     }).then(resp=> {
                         
                         if (resp && resp.data) {
-            
+                            // group
+                            if (resp.data.group) {
+                                
+                                chrome.storage.sync.get(null, (settings) => {
+                                   let group_list = []
+                                   if (settings && settings.GROUPS) {
+                                    group_list = settings.GROUPS
+                                   }
+                                   else {
+                                        group_list = []
+                                   }
+
+                                   group_list.push(resp.data.group);
+                                   
+
+                                   chrome.storage.sync.set({GROUPS: group_list})
+                                })
+                            }
                             // showToast('success', "Created account successfully")
+                            
             
                             login({login_email: params.register_email, login_password: params.register_password})
             
@@ -979,7 +1396,7 @@ async function loadControlScript() {
             document.getElementById('focustug-auth-container').style.display = 'none'
 
             if (loading) loading.style.display = 'block'
-            await  sendRequest('http://localhost:5000/api/v1/auth/login', "POST", {
+            await  sendRequest('https://leapstartlabapi.herokuapp.com/api/v1/auth/login', "POST", {
                 email: params.login_email,
                 password:params.login_password
             }).then(resp=> {
@@ -1100,6 +1517,20 @@ async function loadControlScript() {
                             document.getElementById('focustug-main-control').style.display = 'block'
                             document.getElementById('focustug-session-control').style.display = 'none'
                         }
+                        //remove that popup from everywhere
+                        chrome.tabs.query({}).then(tabs=> {
+                            for (let tab of tabs) {
+                                 chrome.scripting.executeScript( {
+                                    target: {
+                                        tabId: parseInt(tab.id)
+                                    },
+                                    func: removePopUp,
+                                 }).then((e) => {
+
+                                 })
+                            }
+                        })
+                        
                     })
                 })
 
@@ -1115,7 +1546,7 @@ async function loadControlScript() {
                     document.getElementById('focustug-main-control').style.display = 'none'
 
 
-                    const result =  await sendRequest("http://localhost:5000/api/v1/sessions/start", "POST", {
+                    const result =  await sendRequest("https://leapstartlabapi.herokuapp.com/api/v1/sessions/start", "POST", {
                         task : textValue.value
                     })
                     if (result) {
@@ -1344,7 +1775,7 @@ chrome.runtime.onMessage.addListener(async(message, sender, sendResponse) => {
 
 
 async function register (params) {
-   await sendRequest('http://localhost:5000/api/v1/auth/register', "POST", {
+   await sendRequest('https://leapstartlabapi.herokuapp.com/api/v1/auth/register', "POST", {
             email: params.register_email,
             password: params.register_password,
             name: params.register_name
@@ -1405,7 +1836,9 @@ async function setPercentageCalculationTime() {
         let total_distraction_time = SESSION.total_distraction_time;
         
             
+                    if (total_work_time) {
 
+                    }
                 
                     console.log('calculated percentage ' +  total_work_time + total_distraction_time)
                     percentage = total_work_time/(total_work_time + total_distraction_time) * 100
@@ -1434,7 +1867,7 @@ function isActiveTab(tab_id) {
 
 
 chrome.tabs.onCreated.addListener(async (tab, changeInfo) => {
-    if (SESSION.task) {
+    if (SESSION.task && !SESSION.break_time_ongoing) {
         if (SESSION.previous_tab_id) {
             //endTimeSpent(SESSION.previous_tab_id)
             await stopTotalDistractionTimeCounter(SESSION.previous_tab_id)
@@ -1462,6 +1895,9 @@ chrome.tabs.onCreated.addListener(async (tab, changeInfo) => {
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) =>{
     console.log('onUpdated')
+    await stopTotalDistractionTimeCounter(tabId)
+
+    registerTab(tabId)
     chrome.scripting.executeScript({
         target: {
             tabId: parseInt(tabId)
@@ -1509,7 +1945,7 @@ function showBlocker(tab) {
     let message = ''
 
     try {
-        //message = randomBlockerMessage(message_tone)
+        message = randomBlockerMessage(message_tone)
     } catch (e) {
 
     }
@@ -1536,7 +1972,7 @@ function showBlocker(tab) {
         <div>
 
             <div  class="blocker-header-message" style="color: white !important">
-                I believe in you! You can do this, once you're done with your distraction marathon.
+                ${message}
 
             </div>
 
@@ -1569,7 +2005,7 @@ function showBlocker(tab) {
 }
 
 chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
-    if (SESSION.task) {
+    if (SESSION.task && !SESSION.break_time_ongoing) {
         try {
             showPopUp();
         }catch(e){
@@ -1577,7 +2013,7 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
         }
         if (SESSION.previous_tab_id) {
 
-            stopTotalDistractionTimeCounter(SESSION.previous_tab_id)
+           await stopTotalDistractionTimeCounter(SESSION.previous_tab_id)
         }
 
         SESSION.previous_tab_id = tab.tabId
@@ -1600,6 +2036,7 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
             if (SESSION.evaluatedHosts[host] === 'distraction') {
                 await initializeTotalDistractionTimeCounter(tab.id)
 
+
                 if (SESSION.intensity === 'intense') {
                     // show blocker
                     chrome.scripting
@@ -1612,8 +2049,8 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
                             args: [tab.id]
 
                         })
-                        .then((e) => {
-
+                        .then(async (e) => {
+                            await stopTotalDistractionTimeCounter(tab.id)
                         }).catch(e => {
 
                         });
@@ -1634,7 +2071,8 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
                             args: [tab.id]
 
                         })
-                        .then((e) => {
+                        .then(async(e) => {
+                            await stopTotalDistractionTimeCounter(tab.id)
 
                         }).catch(e => {
 
@@ -1675,8 +2113,17 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
 
 function registerTab(tab) {
     if (SESSION.task) {
-        SESSION.tabs.push({id: tab.tabId, relevance: null, classification: null})//
-        console.log(SESSION.tabs)
+        if (typeof(tab) === 'number') {
+            chrome.tabs.get(parseInt(tab), function(t) {
+                SESSION.tabs.push({id: t.id, relevance: null, classification: null})//
+
+            })
+        }
+        else {
+
+            SESSION.tabs.push({id: tab.tabId, relevance: null, classification: null})//
+            console.log(SESSION.tabs)
+        }
         //computePageRelevance
     }
     
@@ -1687,7 +2134,7 @@ chrome.runtime.onMessage.addListener((message)=> {
 })
  
 async function computePageRelevance(tab, data) {
-    if (SESSION.task) {
+    if (SESSION.task && !SESSION.break_time_ongoing) {
         let tabId = tab.id || tab.tabId
         chrome.tabs.get(parseInt(tabId), async (t) =>{
             tab = t;
@@ -1703,6 +2150,25 @@ async function computePageRelevance(tab, data) {
 
             if (SESSION.evaluatedPages[tab.url] === 'distraction'){
                 console.log('evaluated page found')
+                if (SESSION.intensity === 'intense') {
+
+                    chrome.scripting
+                    .executeScript({
+                        target: {
+                            tabId: tabId
+                        },
+                        //files : [ "blocker.js"],
+                        func: showBlocker,
+                        args: [tabId]
+
+                    })
+                    .then(async(e) => {
+                        await stopTotalDistractionTimeCounter(tab.id)
+
+                    }).catch(e => {
+
+                    });
+                }
                 // do nothing
             }
             else {
@@ -1730,7 +2196,7 @@ async function computePageRelevance(tab, data) {
                 }
                 // check 
                 //send the name, description and shit to 
-                const result = await sendRequest('http://localhost:5000/api/v1/sessions/rel', "POST", requestBody);
+                const result = await sendRequest('https://leapstartlabapi.herokuapp.com/api/v1/sessions/rel', "POST", requestBody);
                 const relevance  = result.data;
 
                 if (relevance) {
@@ -1763,14 +2229,25 @@ async function computePageRelevance(tab, data) {
                                 args: [tabId]
     
                             })
-                            .then((e) => {
-    
+                            .then(async (e) => {
+                                await stopTotalDistractionTimeCounter(tab.id)
+
                             }).catch(e => {
     
                             });
                         }
                         
+                        let distracting_host = GLOBALS.distracting_hosts[host]
+
+                        if (!distracting_host) {
+                            
+                            const obj = {host: host, time: 0}
+                            
+                            GLOBALS.distracting_hosts[host] = {time: 0}
+
+                        }
                     }
+
                     
                 }
                 
@@ -1789,6 +2266,26 @@ async function computePageRelevance(tab, data) {
     
 }
 
+
+function initializeBreakTime() {
+    console.log('initializeBreakTime')
+
+    if (SESSION.task && SESSION.break_timer) {
+        let frequency_in_mins = SESSION.break_timer_interval
+        if (frequency_in_mins) {
+            frequency_in_mins = parseInt(frequency_in_mins);
+            let frequency_in_milliseconds = null;
+            console.log('initializeBreakTime frequency in mins ' + frequency_in_mins)
+
+            frequency_in_milliseconds = frequency_in_mins * 60 * 1000;
+            GLOBALS.break_timer_interval = setInterval(() => {
+                handleBreakDue()
+            }, 10000) // frequency_in_milliseconds)
+        }
+
+    }
+}
+
 function startWorkTimer() {
     clearInterval(INTERVALS.break_timer_interval)
 
@@ -1802,12 +2299,13 @@ function startWorkTimer() {
         INTERVALS.work_timer_interval =  setInterval(() => {
             //start break
             clearInterval(INTERVALS.work_timer_interval)
-            console.log('timer interval')
+            console.log('should be break time')
             console.log(INTERVALS.work_timer_interval)
 
-            
 
-            startBreak()
+
+           // startBreak()
+           handleBreakDue()
 
             
             
@@ -1828,6 +2326,7 @@ function startBreakTimer() {
 
         SESSION.break_is_due =true;
         SESSION.break_time_ongoing = true;
+        
 
 
         const seconds = parseInt(SESSION.break_timer) * 60000
