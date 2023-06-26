@@ -553,16 +553,16 @@ function setupControl(session) {
         
                     <div style="display: grid; grid-template-columns: 30% 30% 30%; justify-content: space-between; ">
                         <div style="display:flex; justify-content: center; flex-direction: column; align-items: center">
-                            <p style="color:#4ECB71">Total</p>
-                            <p id="focustug-sessiontime" style="color:#4ECB71"></p>
+                            <p style="color:#4ECB71; font-size: 16px;">Total</p>
+                            <p id="focustug-sessiontime" style="font-size: 16px;color:#4ECB71"></p>
                         </div>
                         <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
-                            <p style="color: #A90F3D;">Distractions</p>
-                            <p id="focustug-distractiontime" style="color: #A90F3D;"></p>
+                            <p style="color: #A90F3D; font-size: 16px;">Distractions</p>
+                            <p id="focustug-distractiontime" style="color: #A90F3D; font-size: 16px;"></p>
                         </div>
                         <div style="display:flex; justify-content: center; flex-direction: column; align-items: center;">
-                            <p style="color: orange;">Leaderboard</p>
-                            <p style="color: orange;"> 5th/10</p>
+                            <p style="color: orange; font-size: 16px;">Leaderboard</p>
+                            <p style="color: orange; font-size: 16px;"> 5th/10</p>
                         </div>
         
                     </div>
@@ -869,6 +869,9 @@ function publishScores() {
     }
     if (message.message == 'end-session') {
         SESSION = {
+            previous_tab_id: null,
+            total_distraction_time: 0,
+        
             task: '',
             keywords: '',
             intensity: 'intense',
@@ -885,6 +888,11 @@ function publishScores() {
             evaluatedHosts: {
         
             },
+        
+            total_work_time: 0,
+            
+            break_time_left: 0,
+            break_due_interval: null
 
         }
         Object.keys(INTERVALS).forEach(key=> {
@@ -1010,8 +1018,8 @@ function setUpPopup() {
                                     </svg>
                                     
                             </div>--->
-                            <div class="foctug-popup__lead__bar" style="border-radius: 5px !important">
-                                <div class="foctug-popup__lead__bar__percentage" id="foctug-popup__lead__bar__percentage">
+                            <div class="foctug-popup__lead__bar" style="height:30px; border-radius: 5px !important">
+                                <div class="foctug-popup__lead__bar__percentage" style="top:21%" id="foctug-popup__lead__bar__percentage">
 
                                 </div>
                                 <div class="foctug-popup__lead__bar__focusbar"  style="border-radius: 5px !important" id="foctug-popup__lead__bar__focusbar">
@@ -1341,7 +1349,7 @@ async function loadControlScript() {
         async function register(params) {
             const loading = document.getElementById('focustug-loading');
             document.getElementById('focustug-auth-container').style.display = 'none'
-            if (loading) loading.style.display = 'block'
+            if (loading) loading.style.display = 'flex'
 
 
                 await sendRequest('https://leapstartlabapi.herokuapp.com/api/v1/auth/register', "POST", {
@@ -1395,7 +1403,7 @@ async function loadControlScript() {
             const loading = document.getElementById('focustug-loading');
             document.getElementById('focustug-auth-container').style.display = 'none'
 
-            if (loading) loading.style.display = 'block'
+            if (loading) loading.style.display = 'flex'
             await  sendRequest('https://leapstartlabapi.herokuapp.com/api/v1/auth/login', "POST", {
                 email: params.login_email,
                 password:params.login_password
@@ -1540,7 +1548,7 @@ async function loadControlScript() {
                     //console.log("value" + textValue.value)
                     const loading = document.getElementById('focustug-loading')
 
-                    loading.style.display = 'block';
+                    loading.style.display = 'flex';
                     e.currentTarget.disabled = true;
 
                     document.getElementById('focustug-main-control').style.display = 'none'
