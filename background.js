@@ -57,8 +57,8 @@ function initializeTotalDistractionTimeCounter(tabId) {
         console.log('setting distraction timer')
         return new Promise((resolve, reject) => {
             
-            clearInterval(INTERVALS['total_distraction_time_for_' + tabId])
-            INTERVALS['total_distraction_time_for_' + tabId] = setInterval(() => {
+            clearInterval(INTERVALS['total_distraction_time'])
+            INTERVALS['total_distraction_time'] = setInterval(() => {
                 SESSION.total_distraction_time++;
                 chrome.runtime.sendMessage({
                     message: 'total-distraction-time',
@@ -106,8 +106,8 @@ function stopTotalDistractionTimeCounter(tabId) {
     try {
         return new Promise((resolve, reject) => {
 
-            clearInterval(INTERVALS['total_distraction_time_for_' + tabId]);
-            INTERVALS['total_distraction_time_for_' + tabId] = null
+            clearInterval(INTERVALS['total_distraction_time']);
+            INTERVALS['total_distraction_time'] = null
             resolve()
         })
     } catch (e) {
@@ -1868,14 +1868,12 @@ function isActiveTab(tab_id) {
 
 chrome.tabs.onCreated.addListener(async (tab, changeInfo) => {
     if (SESSION.task && !SESSION.break_time_ongoing) {
-        if (SESSION.previous_tab_id) {
             //endTimeSpent(SESSION.previous_tab_id)
-            await stopTotalDistractionTimeCounter(SESSION.previous_tab_id)
-        }
+        await stopTotalDistractionTimeCounter(SESSION.previous_tab_id)
+
         SESSION.previous_tab_id = tab.id;
 
-        
-
+    
         registerTab(tab);
 
         try {
@@ -1895,9 +1893,11 @@ chrome.tabs.onCreated.addListener(async (tab, changeInfo) => {
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo) =>{
     console.log('onUpdated')
-    await stopTotalDistractionTimeCounter(tabId)
+    await stopTotalDistractionTimeCounter(SESSION.previous_tab_id)
 
     registerTab(tabId)
+
+    SESSION.previous_tab_id = tabId;
     chrome.scripting.executeScript({
         target: {
             tabId: parseInt(tabId)
@@ -2050,7 +2050,7 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
 
                         })
                         .then(async (e) => {
-                            await stopTotalDistractionTimeCounter(tab.id)
+                           // await stopTotalDistractionTimeCounter(tab.id)
                         }).catch(e => {
 
                         });
@@ -2072,7 +2072,7 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
 
                         })
                         .then(async(e) => {
-                            await stopTotalDistractionTimeCounter(tab.id)
+                           // await stopTotalDistractionTimeCounter(tab.id)
 
                         }).catch(e => {
 
@@ -2080,6 +2080,9 @@ chrome.tabs.onActivated.addListener(async (tab, changeInfo, ) => {
                 }
 
             } 
+            else if (SESSION.evaluatedHosts[tab.url] === 'task') {
+                stopTotalDistractionTimeCounter(tab.id)
+            }
             else {
 
                // computePageRelevance(tab, {})
@@ -2150,8 +2153,9 @@ async function computePageRelevance(tab, data) {
 
             if (SESSION.evaluatedPages[tab.url] === 'distraction'){
                 console.log('evaluated page found')
-                if (SESSION.intensity === 'intense') {
+                initializeTotalDistractionTimeCounter(tab.id)
 
+                if (SESSION.intensity === 'intense') {
                     chrome.scripting
                     .executeScript({
                         target: {
@@ -2163,7 +2167,7 @@ async function computePageRelevance(tab, data) {
 
                     })
                     .then(async(e) => {
-                        await stopTotalDistractionTimeCounter(tab.id)
+                       
 
                     }).catch(e => {
 
@@ -2230,7 +2234,7 @@ async function computePageRelevance(tab, data) {
     
                             })
                             .then(async (e) => {
-                                await stopTotalDistractionTimeCounter(tab.id)
+                               // await stopTotalDistractionTimeCounter(tab.id)
 
                             }).catch(e => {
     
@@ -2246,6 +2250,8 @@ async function computePageRelevance(tab, data) {
                             GLOBALS.distracting_hosts[host] = {time: 0}
 
                         }
+                    }else {
+                        stopTotalDistractionTimeCounter()
                     }
 
                     
